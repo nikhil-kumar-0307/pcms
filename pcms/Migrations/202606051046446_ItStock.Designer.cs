@@ -7,13 +7,13 @@ namespace pcms.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.2")]
-    public sealed partial class InitialCreate : IMigrationMetadata
+    public sealed partial class ItStock : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreate));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(ItStock));
         
         string IMigrationMetadata.Id
         {
-            get { return "202606040421195_InitialCreate"; }
+            get { return "202606051046446_ItStock"; }
         }
         
         string IMigrationMetadata.Source

@@ -1,0 +1,707 @@
+﻿@model PCMS.DTOs.ItStockDto
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IT Stock — PCMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:       #f7f3ff;
+            --white:    #ffffff;
+            --coral:    #ff5c5c;
+            --coral2:   #ff8080;
+            --pink:     #f472b6;
+            --pink-bg:  #fdf2f8;
+            --yellow:   #fbbf24;
+            --yellow-bg:#fffbeb;
+            --blue:     #3b82f6;
+            --blue-bg:  #eff6ff;
+            --teal:     #06b6d4;
+            --teal-bg:  #ecfeff;
+            --purple:   #8b5cf6;
+            --purple-bg:#f5f3ff;
+            --text:     #1e1b4b;
+            --text2:    #4b5563;
+            --muted:    #9ca3af;
+            --border:   #e5e7eb;
+            --border2:  #f3f4f6;
+            --sans:     'Plus Jakarta Sans', sans-serif;
+            --mono:     'JetBrains Mono', monospace;
+            --radius:   12px;
+        }
+
+        html, body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* ── NAV ── */
+        .nav {
+            background: var(--white);
+            border-bottom: 2px solid var(--border);
+            height: 56px; padding: 0 32px;
+            display: flex; align-items: center; gap: 12px;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 1px 12px rgba(0,0,0,0.06);
+        }
+        .nav-brand {
+            font-family: var(--mono); font-weight: 800; font-size: 1.05rem;
+            letter-spacing: 0.06em; color: var(--text);
+        }
+        .nav-brand em { color: var(--coral); font-style: normal; }
+        .nav-sep { color: var(--border); font-size: 1.3rem; }
+        .nav-crumb { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+        .nav-badge {
+            font-family: var(--mono); font-size: 0.62rem; font-weight: 700;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            background: linear-gradient(135deg, var(--coral), var(--pink));
+            color: white; border-radius: 20px; padding: 4px 12px;
+        }
+        .nav-user {
+            font-family: var(--mono); font-size: 0.72rem; color: var(--text2);
+            background: var(--bg); border: 1.5px solid var(--border);
+            border-radius: 20px; padding: 4px 12px;
+        }
+        .nav-link {
+            font-size: 0.75rem; font-weight: 600; color: var(--text2);
+            text-decoration: none; border: 1.5px solid var(--border);
+            border-radius: 8px; padding: 6px 14px;
+            transition: all 0.15s;
+        }
+        .nav-link:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-bg); }
+        .nav-link.danger:hover { border-color: var(--coral); color: var(--coral); background: #fff5f5; }
+
+        /* ── PAGE WRAPPER ── */
+        .page-wrap { max-width: 1800px; margin: 0 auto; padding: 28px 28px 40px; }
+
+        /* ── SEARCH HERO ── */
+        .search-hero {
+            background: var(--white);
+            border-radius: 18px;
+            border: 2px solid var(--border);
+            padding: 28px 32px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+        .search-hero-title {
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+            font-family: var(--mono);
+        }
+        .search-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .search-input {
+            font-family: var(--mono); font-size: 1rem; font-weight: 700;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            background: var(--bg); border: 2px solid var(--border);
+            border-radius: 10px; padding: 10px 18px; color: var(--text);
+            outline: none; width: 160px; transition: all 0.15s;
+        }
+        .search-input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(59,130,246,0.1); background: white; }
+        .search-input::placeholder { text-transform: none; font-weight: 400; color: var(--muted); font-size: 0.82rem; }
+        .btn-go {
+            font-family: var(--mono); font-size: 0.82rem; font-weight: 700;
+            background: var(--blue); color: white;
+            border: none; border-radius: 10px; padding: 11px 28px;
+            cursor: pointer; transition: all 0.15s;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+        }
+        .btn-go:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(59,130,246,0.35); }
+
+        /* ── LOT INFO STRIP ── */
+        .lot-strip {
+            display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch;
+            margin-top: 20px; padding-top: 20px;
+            border-top: 2px dashed var(--border2);
+            animation: fadeSlide 0.3s ease;
+        }
+        @@keyframes fadeSlide { from { opacity:0; transform: translateY(-8px); } to { opacity:1; transform: translateY(0); } }
+
+        .lot-info-card {
+            background: var(--bg); border: 1.5px solid var(--border);
+            border-radius: 10px; padding: 10px 16px; display: flex;
+            flex-direction: column; gap: 2px; min-width: 130px;
+        }
+        .lot-info-key { font-family: var(--mono); font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+        .lot-info-val { font-family: var(--mono); font-size: 0.88rem; font-weight: 700; color: var(--text); }
+        .lot-info-val.coral { color: var(--coral); }
+        .lot-info-val.blue  { color: var(--blue); }
+
+        .qty-card {
+            border-radius: 10px; padding: 10px 20px;
+            display: flex; flex-direction: column; gap: 2px;
+            min-width: 110px; border: 1.5px solid;
+        }
+        .qty-card.total  { background: var(--yellow-bg); border-color: #fde68a; }
+        .qty-card.allotted { background: var(--pink-bg); border-color: #fbcfe8; }
+        .qty-card.avail  { background: var(--teal-bg); border-color: #a5f3fc; }
+        .qty-key { font-family: var(--mono); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+        .qty-key.total   { color: #92400e; }
+        .qty-key.allotted{ color: #9d174d; }
+        .qty-key.avail   { color: #0e7490; }
+        .qty-num { font-family: var(--mono); font-size: 1.5rem; font-weight: 800; line-height: 1.1; }
+        .qty-num.total   { color: var(--yellow); }
+        .qty-num.allotted{ color: var(--pink); }
+        .qty-num.avail   { color: var(--teal); }
+
+        /* ── ALERTS ── */
+        .alert {
+            border-radius: 10px; padding: 12px 18px;
+            font-family: var(--mono); font-size: 0.75rem;
+            margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+        }
+        .alert-ok  { background: #f0fdf4; border: 1.5px solid #86efac; color: #166534; }
+        .alert-err { background: #fff5f5; border: 1.5px solid #fca5a5; color: #991b1b; }
+
+        /* ── ACTION BAR ── */
+        .action-bar {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 16px; flex-wrap: wrap;
+        }
+        .btn-insert {
+            font-family: var(--sans); font-size: 0.82rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--coral), var(--pink));
+            color: white; border: none; border-radius: 10px; padding: 10px 22px;
+            cursor: pointer; text-decoration: none; display: inline-flex;
+            align-items: center; gap: 7px;
+            box-shadow: 0 4px 14px rgba(255,92,92,0.3);
+            transition: all 0.15s;
+        }
+        .btn-insert:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,92,92,0.38); }
+        .records-label {
+            font-family: var(--mono); font-size: 0.68rem; font-weight: 700;
+            color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase;
+            margin-left: auto;
+        }
+        .count-badge {
+            background: var(--blue-bg); color: var(--blue);
+            border: 1.5px solid #bfdbfe;
+            font-family: var(--mono); font-size: 0.65rem; font-weight: 700;
+            border-radius: 20px; padding: 3px 12px;
+        }
+
+        /* ── FORM CARD ── */
+        .form-card {
+            background: var(--white);
+            border: 2px solid var(--border);
+            border-radius: 18px;
+            padding: 28px 28px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+            animation: fadeSlide 0.25s ease;
+        }
+        .section-head {
+            font-family: var(--mono); font-size: 0.62rem; font-weight: 800;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            display: flex; align-items: center; gap: 10px;
+            margin: 18px 0 10px;
+        }
+        .section-head:first-child { margin-top: 0; }
+        .section-head .dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .section-head::after { content: ''; flex: 1; height: 1.5px; border-radius: 2px; }
+
+        .sh-pink  { color: #be185d; }
+        .sh-pink .dot { background: var(--pink); }
+        .sh-pink::after { background: linear-gradient(90deg, #fbcfe8, transparent); }
+
+        .sh-blue  { color: #1d4ed8; }
+        .sh-blue .dot { background: var(--blue); }
+        .sh-blue::after { background: linear-gradient(90deg, #bfdbfe, transparent); }
+
+        .sh-yellow { color: #92400e; }
+        .sh-yellow .dot { background: var(--yellow); }
+        .sh-yellow::after { background: linear-gradient(90deg, #fde68a, transparent); }
+
+        .sh-teal  { color: #0e7490; }
+        .sh-teal .dot { background: var(--teal); }
+        .sh-teal::after { background: linear-gradient(90deg, #a5f3fc, transparent); }
+
+        .sh-coral { color: #b91c1c; }
+        .sh-coral .dot { background: var(--coral); }
+        .sh-coral::after { background: linear-gradient(90deg, #fca5a5, transparent); }
+
+        .form-grid { display: grid; gap: 12px; }
+        .g2 { grid-template-columns: 1fr 1fr; }
+        .g3 { grid-template-columns: 1fr 1fr 1fr; }
+        .g4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+        .g-dept { grid-template-columns: 80px 1fr; }
+
+        .f-field { display: flex; flex-direction: column; gap: 4px; }
+        .f-label {
+            font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
+            letter-spacing: 0.07em; text-transform: uppercase; color: var(--text2);
+        }
+        .f-input {
+            font-family: var(--mono); font-size: 0.78rem;
+            background: var(--bg); border: 1.5px solid var(--border);
+            border-radius: 8px; padding: 8px 12px; color: var(--text);
+            outline: none; width: 100%; transition: all 0.15s;
+        }
+        .f-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); background: white; }
+        .f-input::placeholder { color: var(--muted); font-size: 0.72rem; }
+        .f-input[readonly] { background: #f9fafb; color: var(--muted); cursor: not-allowed; border-style: dashed; }
+        .f-hint { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); }
+        input[type="date"] { color-scheme: light; }
+        input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.5; }
+
+        .btn-query {
+            font-family: var(--mono); font-size: 0.65rem; font-weight: 700;
+            background: var(--purple-bg); color: var(--purple);
+            border: 1.5px solid #ddd6fe; border-radius: 7px;
+            padding: 5px 12px; cursor: pointer; transition: all 0.15s;
+            display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;
+        }
+        .btn-query:hover { background: #ede9fe; border-color: var(--purple); }
+
+        .form-actions {
+            display: flex; gap: 10px; align-items: center;
+            justify-content: flex-end; padding-top: 18px;
+            margin-top: 8px; border-top: 2px solid var(--border2);
+        }
+        .btn-submit {
+            font-family: var(--sans); font-size: 0.85rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--blue), #6366f1);
+            color: white; border: none; border-radius: 10px;
+            padding: 11px 32px; cursor: pointer;
+            box-shadow: 0 4px 14px rgba(59,130,246,0.3);
+            transition: all 0.15s;
+        }
+        .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.38); }
+        .btn-cancel {
+            font-family: var(--sans); font-size: 0.82rem; font-weight: 600;
+            background: white; color: var(--text2);
+            border: 1.5px solid var(--border); border-radius: 10px;
+            padding: 11px 22px; cursor: pointer; text-decoration: none;
+            transition: all 0.15s;
+        }
+        .btn-cancel:hover { border-color: var(--coral); color: var(--coral); background: #fff5f5; }
+
+        /* ── TABLE ── */
+        .table-card {
+            background: var(--white);
+            border: 2px solid var(--border);
+            border-radius: 18px; overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+        }
+        .table-scroll { overflow-x: auto; }
+        .table-scroll::-webkit-scrollbar { height: 5px; }
+        .table-scroll::-webkit-scrollbar-track { background: var(--bg); }
+        .table-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        table.stock-table {
+            width: 100%; border-collapse: collapse;
+            font-family: var(--mono); font-size: 0.7rem;
+        }
+        .stock-table thead th {
+            background: linear-gradient(135deg, #fdf2f8 0%, #eff6ff 100%);
+            color: var(--text2); font-weight: 700; font-size: 0.6rem;
+            letter-spacing: 0.07em; text-transform: uppercase;
+            padding: 12px 14px; text-align: left; white-space: nowrap;
+            border-bottom: 2px solid var(--border);
+        }
+        .stock-table thead th:first-child { color: var(--coral); }
+        .stock-table tbody tr { border-bottom: 1px solid var(--border2); transition: background 0.1s; }
+        .stock-table tbody tr:hover { background: #fffbff; }
+        .stock-table tbody tr:last-child { border-bottom: none; }
+        .stock-table tbody td { padding: 10px 14px; color: var(--text2); white-space: nowrap; vertical-align: middle; }
+        .td-eno { font-weight: 800; color: var(--text); font-size: 0.8rem; }
+
+        .action-btn {
+            font-family: var(--mono); font-size: 0.62rem; font-weight: 700;
+            padding: 4px 10px; border-radius: 6px; cursor: pointer;
+            border: 1.5px solid; transition: all 0.12s; text-decoration: none;
+            display: inline-block;
+        }
+        .btn-sel  { background: var(--blue-bg); color: var(--blue); border-color: #bfdbfe; }
+        .btn-sel:hover  { background: #dbeafe; }
+        .btn-del  { background: #fff5f5; color: var(--coral); border-color: #fca5a5; }
+        .btn-del:hover  { background: #fee2e2; }
+
+        .badge {
+            display: inline-block; font-family: var(--mono);
+            font-size: 0.58rem; font-weight: 700; letter-spacing: 0.07em;
+            text-transform: uppercase; border-radius: 20px; padding: 2px 9px;
+            border: 1.5px solid;
+        }
+        .b-cr   { background: var(--blue-bg); color: var(--blue); border-color: #bfdbfe; }
+        .b-sf   { background: var(--teal-bg); color: var(--teal); border-color: #a5f3fc; }
+        .b-new  { background: #f0fdf4; color: #16a34a; border-color: #86efac; }
+        .b-old  { background: var(--yellow-bg); color: #92400e; border-color: #fde68a; }
+
+        /* ── EMPTY / NO LOT ── */
+        .empty-card {
+            background: var(--white); border: 2px dashed var(--border);
+            border-radius: 18px; padding: 56px 20px; text-align: center;
+        }
+        .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+        .empty-text { font-size: 0.95rem; font-weight: 600; color: var(--text2); }
+        .empty-sub  { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+
+        @@media (max-width: 900px) {
+            .g4, .g3 { grid-template-columns: 1fr 1fr; }
+        }
+        @@media (max-width: 600px) {
+            .g4, .g3, .g2 { grid-template-columns: 1fr; }
+            .page-wrap { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ NAV ═══ -->
+    <nav class="nav">
+        <span class="nav-brand">PC<em>MS</em></span>
+        <span class="nav-sep">/</span>
+        <span class="nav-crumb">Extra Panel / IT Stock</span>
+        <div class="nav-right">
+            <span class="nav-badge">IT Stock</span>
+            <span class="nav-user">@Session["EmployeeNumber"]</span>
+            <a href="@Url.Action("Extra","Admin")" class="nav-link">← Extra Panel</a>
+            <a href="@Url.Action("Logout","Account")" class="nav-link danger">Logout</a>
+        </div>
+    </nav>
+
+    <!-- ═══ PAGE ═══ -->
+    <div class="page-wrap">
+
+        <!-- ① SEARCH HERO -->
+        <div class="search-hero">
+            <div class="search-hero-title">🔍 Search Lot</div>
+            @using (Html.BeginForm("Load", "ItStock", FormMethod.Get, new { @class = "search-row" }))
+            {
+                <input type="text" name="lotNo" value="@Model.LotNo"
+                       placeholder="Enter Lot No. e.g. C25"
+                       class="search-input" maxlength="50" autocomplete="off" />
+                <button type="submit" class="btn-go">Search →</button>
+            }
+
+            @if (Model.LotLoaded)
+            {
+                <div class="lot-strip">
+                    <div class="lot-info-card">
+                        <span class="lot-info-key">Lot No</span>
+                        <span class="lot-info-val coral">@Model.LotNo</span>
+                    </div>
+                    <div class="lot-info-card">
+                        <span class="lot-info-key">Equip Type</span>
+                        <span class="lot-info-val">@Model.LotEquipTypeCode &nbsp; <span style="font-weight:500; color:#6b7280; font-size:0.78rem;">@Model.LotEquipType</span></span>
+                    </div>
+                    <div class="lot-info-card">
+                        <span class="lot-info-key">Model</span>
+                        <span class="lot-info-val blue">@Model.LotModel</span>
+                    </div>
+                    <div class="lot-info-card">
+                        <span class="lot-info-key">Brand</span>
+                        <span class="lot-info-val">@Model.LotBrandCode &nbsp; <span style="font-weight:500; color:#6b7280; font-size:0.78rem;">@Model.LotBrandName</span></span>
+                    </div>
+                    <div style="flex:1;"></div>
+                    <div class="qty-card total">
+                        <span class="qty-key total">Total Qty</span>
+                        <span class="qty-num total">@Model.TotalQty</span>
+                    </div>
+                    <div class="qty-card allotted">
+                        <span class="qty-key allotted">Allotted</span>
+                        <span class="qty-num allotted">@Model.AllottedQty</span>
+                    </div>
+                    <div class="qty-card avail">
+                        <span class="qty-key avail">Available</span>
+                        <span class="qty-num avail">@(Model.TotalQty - Model.AllottedQty)</span>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.LotLoaded)
+        {
+            <!-- ② ALERTS -->
+            if (!string.IsNullOrEmpty(Model.SuccessMessage))
+            {
+                <div class="alert alert-ok">✔ @Model.SuccessMessage</div>
+            }
+            if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-err">✖ @Model.ErrorMessage</div>
+            }
+
+            <!-- ③ ACTION BAR -->
+            <div class="action-bar">
+                <a href="@Url.Action("ShowForm","ItStock", new { lotNo = Model.LotNo })" class="btn-insert">
+                    ＋ Insert / Update Record
+                </a>
+                @if (Model.Rows != null && Model.Rows.Count > 0)
+                {
+                    <span class="records-label">Records</span>
+                    <span class="count-badge">@Model.Rows.Count entries</span>
+                }
+            </div>
+
+            <!-- ④ ENTRY FORM -->
+            if (Model.ShowForm)
+            {
+                using (Html.BeginForm("Upsert", "ItStock", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.LotNo)
+                    @Html.HiddenFor(m => m.EditId)
+
+                    <div class="form-card">
+
+                        <!-- Current Holder -->
+                        <p class="section-head sh-pink"><span class="dot"></span> Current Holder</p>
+                        <div class="form-grid g4">
+                            <div class="f-field">
+                                <label class="f-label">E No</label>
+                                @Html.TextBoxFor(m => m.ENo, new { @class = "f-input", placeholder = "Auto", @readonly = "readonly" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Emp No</label>
+                                @Html.TextBoxFor(m => m.EmpNo, new { @class = "f-input", placeholder = "Employee No", id = "EmpNo" })
+                                <button type="button" onclick="queryEmp()" class="btn-query">⤵ Query</button>
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Emp Name</label>
+                                @Html.TextBoxFor(m => m.EmpName, new { @class = "f-input", placeholder = "Full name" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Dept</label>
+                                <div class="form-grid g-dept">
+                                    @Html.TextBoxFor(m => m.Dept, new { @class = "f-input", placeholder = "Code" })
+                                    @Html.TextBoxFor(m => m.DeptName, new { @class = "f-input", placeholder = "Name" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Receiving Employee -->
+                        <p class="section-head sh-blue"><span class="dot"></span> Receiving Employee</p>
+                        <div class="form-grid g3">
+                            <div class="f-field">
+                                <label class="f-label">Rec Emp No</label>
+                                @Html.TextBoxFor(m => m.RecEmpNo, new { @class = "f-input", placeholder = "Rec. emp. no." })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Rec Emp Name</label>
+                                @Html.TextBoxFor(m => m.RecEmpName, new { @class = "f-input", placeholder = "Rec. emp. name" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Rec Dept</label>
+                                <div class="form-grid g-dept">
+                                    @Html.TextBoxFor(m => m.RecDept, new { @class = "f-input", placeholder = "Code" })
+                                    @Html.TextBoxFor(m => m.RecDeptName, new { @class = "f-input", placeholder = "Name" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dates & Grade -->
+                        <p class="section-head sh-yellow"><span class="dot"></span> Dates &amp; Grade</p>
+                        <div class="form-grid g4">
+                            <div class="f-field">
+                                <label class="f-label">Issue Date</label>
+                                @Html.TextBoxFor(m => m.IssueDt, "{0:yyyy-MM-dd}", new { @class = "f-input", type = "date" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Transfer In/Out Date</label>
+                                @Html.TextBoxFor(m => m.TransferInOutDt, "{0:yyyy-MM-dd}", new { @class = "f-input", type = "date" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Grade</label>
+                                @Html.TextBoxFor(m => m.Grade, new { @class = "f-input", placeholder = "e.g. X, E1, E2" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Mc Num</label>
+                                @Html.TextBoxFor(m => m.McNum, new { @class = "f-input", placeholder = "Machine number" })
+                            </div>
+                        </div>
+
+                        <!-- Classification & Location -->
+                        <p class="section-head sh-teal"><span class="dot"></span> Classification &amp; Location</p>
+                        <div class="form-grid g4">
+                            <div class="f-field">
+                                <label class="f-label">Current Location</label>
+                                @Html.TextBoxFor(m => m.CurrLoc, new { @class = "f-input", placeholder = "Location" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Previous Location</label>
+                                @Html.TextBoxFor(m => m.PrevLoc, new { @class = "f-input", placeholder = "Previous location" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Stock Type</label>
+                                @Html.TextBoxFor(m => m.StType, new { @class = "f-input", placeholder = "CR / SF …", id = "StType" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Pool Tag (O / N)</label>
+                                @Html.TextBoxFor(m => m.PoolTag, new { @class = "f-input", placeholder = "O = Old  ·  N = New", maxlength = "1", id = "PoolTag" })
+                            </div>
+                        </div>
+
+                        <!-- Identifiers -->
+                        <p class="section-head sh-coral"><span class="dot"></span> Identifiers &amp; Additional Info</p>
+                        <div class="form-grid g4">
+                            <div class="f-field">
+                                <label class="f-label">Asset Code</label>
+                                @Html.TextBoxFor(m => m.AssetCode, new { @class = "f-input", placeholder = "Asset code" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Phy Verifier Code</label>
+                                @Html.TextBoxFor(m => m.PhyVerifierCode, new { @class = "f-input", placeholder = "Verifier code" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">IP Address</label>
+                                @Html.TextBoxFor(m => m.IpNo, new { @class = "f-input", placeholder = "IP address" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">MAC Address</label>
+                                @Html.TextBoxFor(m => m.MacAddress, new { @class = "f-input", placeholder = "MAC address" })
+                            </div>
+                            <div class="f-field">
+                                <label class="f-label">Phone No</label>
+                                @Html.TextBoxFor(m => m.PhoneNo, new { @class = "f-input", placeholder = "Phone" })
+                            </div>
+                            <div class="f-field" style="grid-column: span 3;">
+                                <label class="f-label">Remarks</label>
+                                @Html.TextBoxFor(m => m.Remarks, new { @class = "f-input", placeholder = "Notes / replacement reference…" })
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="form-actions">
+                            <a href="@Url.Action("Index","ItStock", new { lotNo = Model.LotNo })" class="btn-cancel">Cancel</a>
+                            <button type="submit" class="btn-submit">
+                                @(Model.EditId.HasValue && Model.EditId.Value > 0 ? "✔ Update Record" : "＋ Insert Record")
+                            </button>
+                        </div>
+
+                    </div>
+                }
+            }
+
+            <!-- ⑤ STOCK TABLE -->
+            if (Model.Rows != null && Model.Rows.Count > 0)
+            {
+                <div class="table-card">
+                    <div class="table-scroll">
+                        <table class="stock-table">
+                            <thead>
+                                <tr>
+                                    <th>Actions</th>
+                                    <th>E.No</th>
+                                    <th>Emp No</th>
+                                    <th>Name</th>
+                                    <th>Dept</th>
+                                    <th>Rec Dept</th>
+                                    <th>Issue Dt</th>
+                                    <th>Tr In/Out</th>
+                                    <th>Grade</th>
+                                    <th>Curr Loc</th>
+                                    <th>Prev Loc</th>
+                                    <th>St Type</th>
+                                    <th>P Tag</th>
+                                    <th>Asset Code</th>
+                                    <th>PV Code</th>
+                                    <th>McNum</th>
+                                    <th>IP No</th>
+                                    <th>Phone</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in Model.Rows)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="@Url.Action("Edit","ItStock", new { id = row.Id, lotNo = Model.LotNo })"
+                                               class="action-btn btn-sel">Select</a>
+                                            &nbsp;
+                                            @using (Html.BeginForm("Delete", "ItStock", new { id = row.Id, lotNo = Model.LotNo }, FormMethod.Post, new { style = "display:inline;" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="action-btn btn-del"
+                                                        onclick="return confirm('Delete record #@row.ENo?')">
+                                                    Delete
+                                                </button>
+                                            }
+                                        </td>
+                                        <td class="td-eno">@row.ENo?.ToString("D3")</td>
+                                        <td>@row.EmpNo</td>
+                                        <td style="font-weight:600; color: var(--text);">@row.EmpName</td>
+                                        <td><span style="color:var(--coral); font-weight:700;">@row.Dept</span>&nbsp;<span style="color:var(--text2);">@row.DeptName</span></td>
+                                        <td><span style="color:var(--blue); font-weight:700;">@row.RecDept</span>&nbsp;<span style="color:var(--text2);">@row.RecDeptName</span></td>
+                                        <td>@(row.IssueDt.HasValue ? row.IssueDt.Value.ToString("dd/MM/yy") : "—")</td>
+                                        <td>@(row.TransferInOutDt.HasValue ? row.TransferInOutDt.Value.ToString("dd/MM/yy") : "—")</td>
+                                        <td><span style="color:var(--purple); font-weight:700;">@row.Grade</span></td>
+                                        <td>@row.CurrLoc</td>
+                                        <td style="color:var(--muted);">@row.PrevLoc</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(row.StType))
+                                            {
+                                                <span class="badge @(row.StType == "CR" ? "b-cr" : "b-sf")">@row.StType</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(row.PTag))
+                                            {
+                                                <span class="badge @(row.PTag == "N" ? "b-new" : "b-old")">@row.PTag</span>
+                                            }
+                                        </td>
+                                        <td style="color:var(--text2);">@row.AssetCode</td>
+                                        <td style="color:var(--muted);">@row.PvCode</td>
+                                        <td>@row.McNum</td>
+                                        <td style="color:var(--teal); font-weight:600;">@row.IpNo</td>
+                                        <td>@row.PhoneNo</td>
+                                        <td style="color:var(--muted);">@row.Remarks</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            else if (!Model.ShowForm)
+            {
+                <div class="empty-card">
+                    <div class="empty-icon">📦</div>
+                    <p class="empty-text">No stock records for Lot <strong style="color:var(--coral);">@Model.LotNo</strong></p>
+                    <p class="empty-sub">Click "+ Insert / Update Record" above to add the first entry.</p>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-card">
+                <div class="empty-icon">🗄️</div>
+                <p class="empty-text">Enter a Lot No. to get started</p>
+                <p class="empty-sub">Search above to load lot details and stock records.</p>
+            </div>
+        }
+
+    </div>
+
+    <script>
+        document.querySelectorAll('.search-input').forEach(function (el) {
+            el.addEventListener('input', function () {
+                var pos = this.selectionStart;
+                this.value = this.value.toUpperCase();
+                this.setSelectionRange(pos, pos);
+            });
+        });
+
+        function queryEmp() {
+            var empNo = document.getElementById('EmpNo').value.trim();
+            if (!empNo) { alert('Enter an Employee No. first.'); return; }
+            // Wire up to: fetch('/Employee/GetByEmpNo?empNo=' + empNo)
+            alert('Query endpoint: /Employee/GetByEmpNo?empNo=' + empNo);
+        }
+
+        var poolTagInput = document.getElementById('PoolTag');
+        if (poolTagInput) poolTagInput.addEventListener('input', function () { this.value = this.value.toUpperCase(); });
+
+        var stTypeInput = document.getElementById('StType');
+        if (stTypeInput) stTypeInput.addEventListener('input', function () { this.value = this.value.toUpperCase(); });
+    </script>
+</body>
+</html>

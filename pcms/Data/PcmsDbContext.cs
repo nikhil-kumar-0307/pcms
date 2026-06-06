@@ -1,5 +1,6 @@
 ﻿using pcms.Data.Configuration;
 using pcms.Models;
+using PCMS.Models;          // <-- add this for LotMaster
 using System.Data.Entity;
 
 namespace pcms.Data
@@ -12,5 +13,7 @@ namespace pcms.Data
         }
 
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<LotMaster> LotMasters { get; set; }
+        public DbSet<ItStock> ItStocks { get; set; }
     }
 }
