@@ -1,0 +1,374 @@
+﻿@model pcms.Models.DTOs.DepartmentDto
+@{
+    ViewBag.Title = "New Department Entry Form";
+    Layout = null; 
+}
+
+<style>
+    .dp-wrap {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #f4f1ee;
+        min-height: 100vh;
+        padding: 0 0 40px 0;
+    }
+
+    /* ── Header ── */
+    .dp-header {
+        background: linear-gradient(90deg, #6B1010 0%, #9B2020 60%, #7B1B1B 100%);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-align: center;
+        padding: 9px 0;
+        text-transform: uppercase;
+        border-bottom: 3px solid #4a0d0d;
+    }
+
+    /* ── Form card ── */
+    .dp-card {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-top: 3px solid #7B1B1B;
+        margin: 20px 18px 0;
+        padding: 16px 20px 14px;
+    }
+
+    .dp-card-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #7B1B1B;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #f0e0e0;
+    }
+
+    .dp-field-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .dp-label {
+        width: 100px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #333;
+        letter-spacing: 0.5px;
+        flex-shrink: 0;
+    }
+
+    .dp-input {
+        border: 1px solid #bbb;
+        background: #fafafa;
+        padding: 3px 6px;
+        font-size: 12px;
+        height: 22px;
+        outline: none;
+        transition: border-color 0.15s;
+    }
+
+        .dp-input:focus {
+            border-color: #7B1B1B;
+            background: #fff;
+            box-shadow: 0 0 0 2px rgba(123,27,27,0.1);
+        }
+
+    .dp-input-name {
+        width: 220px;
+    }
+
+    .dp-input-code {
+        width: 80px;
+        text-transform: uppercase;
+    }
+
+    .dp-field-error {
+        font-size: 10px;
+        color: #cc0000;
+        margin-left: 6px;
+    }
+
+    .dp-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #f0e0e0;
+    }
+
+    .dp-btn-submit {
+        background: #7B1B1B;
+        color: #fff;
+        border: none;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding: 5px 20px;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: background 0.15s;
+    }
+
+        .dp-btn-submit:hover {
+            background: #9B2020;
+        }
+
+    .dp-btn-back {
+        font-size: 11px;
+        color: #7B1B1B;
+        text-decoration: underline;
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+        .dp-btn-back:hover {
+            color: #4a0d0d;
+        }
+
+    /* ── Alert ── */
+    .dp-alert-success {
+        margin: 12px 18px 0;
+        background: #eaf6ea;
+        border-left: 4px solid #2e7d32;
+        color: #2e7d32;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 7px 12px;
+    }
+
+    .dp-alert-error {
+        margin: 12px 18px 0;
+        background: #fdecea;
+        border-left: 4px solid #cc0000;
+        color: #cc0000;
+        font-size: 11px;
+        padding: 7px 12px;
+    }
+
+    /* ── Table ── */
+    .dp-table-card {
+        margin: 16px 18px 0;
+        border: 1px solid #ddd;
+        border-top: 3px solid #7B1B1B;
+        background: #fff;
+    }
+
+    .dp-table-header {
+        background: #7B1B1B;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 7px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .dp-table-count {
+        background: rgba(255,255,255,0.2);
+        font-size: 10px;
+        padding: 2px 8px;
+        font-weight: 400;
+        letter-spacing: 0;
+    }
+
+    .dp-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+        .dp-table thead tr {
+            background: #f5eded;
+        }
+
+        .dp-table thead th {
+            font-size: 10px;
+            font-weight: 700;
+            color: #7B1B1B;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 7px 14px;
+            border-bottom: 2px solid #e0c8c8;
+            text-align: left;
+        }
+
+        .dp-table tbody tr {
+            border-bottom: 1px solid #f0e8e8;
+            transition: background 0.1s;
+        }
+
+            .dp-table tbody tr:hover {
+                background: #fdf7f7;
+            }
+
+            .dp-table tbody tr:last-child {
+                border-bottom: none;
+            }
+
+        .dp-table td {
+            padding: 7px 14px;
+            color: #333;
+            font-size: 12px;
+        }
+
+    .dp-sno {
+        width: 40px;
+        color: #999;
+        font-size: 11px;
+    }
+
+    .dp-code-badge {
+        display: inline-block;
+        background: #f5eded;
+        color: #7B1B1B;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding: 2px 8px;
+        border: 1px solid #e0c8c8;
+    }
+
+    .dp-empty {
+        text-align: center;
+        color: #aaa;
+        font-size: 12px;
+        padding: 24px;
+        font-style: italic;
+    }
+
+    .dp-del-btn {
+        background: none;
+        border: 1px solid #e0c8c8;
+        color: #7B1B1B;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        padding: 2px 10px;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: all 0.15s;
+    }
+
+        .dp-del-btn:hover {
+            background: #7B1B1B;
+            color: #fff;
+            border-color: #7B1B1B;
+        }
+</style>
+
+<div class="dp-wrap">
+    <div class="dp-header">New Department Entry Form</div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="dp-alert-success">&#10003; &nbsp;@TempData["SuccessMessage"]</div>
+    }
+
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.Keys.Any())
+    {
+        <div class="dp-alert-error">
+            @Html.ValidationSummary(false, "Please correct the errors below.")
+        </div>
+    }
+
+    @using (Html.BeginForm("Create", "Department", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="dp-card">
+            <div class="dp-card-title">&#9632; &nbsp;Add New Department</div>
+
+            <div class="dp-field-row">
+                <span class="dp-label">Dept Name</span>
+                @Html.TextBoxFor(m => m.DeptName, new
+                {
+                    @class = "dp-input dp-input-name",
+                    placeholder = "Enter department name",
+                    autocomplete = "off"
+                })
+                @Html.ValidationMessageFor(m => m.DeptName, "", new { @class = "dp-field-error" })
+            </div>
+
+            <div class="dp-field-row">
+                <span class="dp-label">Dept Code</span>
+                @Html.TextBoxFor(m => m.DeptCode, new
+                {
+                    @class = "dp-input dp-input-code",
+                    placeholder = "e.g. HR",
+                    autocomplete = "off",
+                    id = "deptCodeInput"
+                })
+                @Html.ValidationMessageFor(m => m.DeptCode, "", new { @class = "dp-field-error" })
+            </div>
+
+            <div class="dp-actions">
+                <button type="submit" class="dp-btn-submit">&#10148; Submit</button>
+                <a href="javascript:history.back()" class="dp-btn-back">&#8592; Back</a>
+            </div>
+        </div>
+    }
+
+    <!-- Department List Table -->
+    <div class="dp-table-card">
+        <div class="dp-table-header">
+            <span>&#9632; &nbsp;Department Records</span>
+            <span class="dp-table-count">Total: @Model.Departments.Count</span>
+        </div>
+
+        @if (Model.Departments.Count == 0)
+        {
+            <div class="dp-empty">No departments added yet.</div>
+        }
+        else
+        {
+            <table class="dp-table">
+                <thead>
+                    <tr>
+                        <th class="dp-sno">#</th>
+                        <th>Department Name</th>
+                        <th>Dept Code</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int sno = 1; }
+                    @foreach (var dept in Model.Departments)
+                    {
+                        <tr>
+                            <td class="dp-sno">@(sno++)</td>
+                            <td>@dept.DeptName</td>
+                            <td><span class="dp-code-badge">@dept.DeptCode</span></td>
+                            <td>
+                                @using (Html.BeginForm("Delete", "Department", FormMethod.Post, new { style = "display:inline;" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@dept.DeptId" />
+                                    <button type="submit" class="dp-del-btn"
+                                            onclick="return confirm('Delete @dept.DeptName?')">
+                                        &#10005; Delete
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        var c = document.getElementById('deptCodeInput');
+        if (c) c.addEventListener('input', function () { this.value = this.value.toUpperCase(); });
+    </script>
+}
