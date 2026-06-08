@@ -1,0 +1,508 @@
+﻿@model pcms.Models.DTOs.EmployeeDetailsDto
+@{
+    ViewBag.Title = "Employee Addition";
+    Layout = null;
+}
+
+<link href="https://cdn.jsdelivr.net/npm/tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet" />
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    .page {
+        padding: 1.5rem;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #e8e6f0;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hdr {
+        background: #3C3489;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .hdr-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #534AB7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .hdr-icon i {
+            font-size: 20px;
+            color: #EEEDFE;
+        }
+
+    .hdr-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: #EEEDFE;
+        letter-spacing: 0.01em;
+    }
+
+    .hdr-sub {
+        font-size: 12px;
+        color: #AFA9EC;
+        margin-top: 2px;
+    }
+
+    .hdr-badge {
+        margin-left: auto;
+        background: #534AB7;
+        color: #CECBF6;
+        font-size: 11px;
+        font-weight: 500;
+        padding: 4px 10px;
+        border-radius: 20px;
+    }
+
+    .body {
+        padding: 1.5rem;
+    }
+
+    .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+
+    .fg {
+        margin-bottom: 14px;
+    }
+
+    .lbl {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #6b7280;
+        margin-bottom: 6px;
+    }
+
+    .req {
+        color: #D85A30;
+        margin-left: 2px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 9px 12px;
+        font-size: 14px;
+        color: #111;
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        outline: none;
+        transition: border-color .15s, box-shadow .15s;
+    }
+
+        .form-control:focus {
+            border-color: #7F77DD;
+            box-shadow: 0 0 0 3px rgba(127,119,221,.15);
+        }
+
+    .field-validation-error {
+        display: block;
+        font-size: 11px;
+        color: #D85A30;
+        margin-top: 4px;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        padding-top: 16px;
+        border-top: 1px solid #f0eef8;
+        margin-top: 4px;
+    }
+
+    .btn-insert {
+        flex: 1;
+        background: #3C3489;
+        color: #EEEDFE;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        transition: background .15s;
+    }
+
+        .btn-insert:hover {
+            background: #534AB7;
+        }
+
+    .btn-reset {
+        flex: 1;
+        background: transparent;
+        color: #6b7280;
+        border: 1px solid #d1d5db;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        transition: background .15s;
+    }
+
+        .btn-reset:hover {
+            background: #f9f8ff;
+        }
+
+    .alert-success {
+        background: #EAF3DE;
+        border: 1px solid #97C459;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+        color: #27500A;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .alert-error {
+        background: #FCEBEB;
+        border: 1px solid #F09595;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+        color: #791F1F;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    /* ── Table card ── */
+    .tbl-hdr {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #f0eef8;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .tbl-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #111;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .count-badge {
+        background: #EEEDFE;
+        color: #534AB7;
+        font-size: 11px;
+        font-weight: 500;
+        padding: 3px 9px;
+        border-radius: 20px;
+    }
+
+    .search-wrap {
+        position: relative;
+    }
+
+        .search-wrap i {
+            position: absolute;
+            left: 9px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+            color: #9ca3af;
+        }
+
+        .search-wrap input {
+            width: 200px;
+            padding: 7px 10px 7px 30px;
+            font-size: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color .15s;
+        }
+
+            .search-wrap input:focus {
+                border-color: #7F77DD;
+            }
+
+    .emp-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+        .emp-table thead tr {
+            background: #faf9ff;
+        }
+
+        .emp-table th {
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            text-align: left;
+            border-bottom: 1px solid #f0eef8;
+        }
+
+        .emp-table td {
+            padding: 11px 14px;
+            font-size: 13px;
+            color: #111;
+            border-bottom: 1px solid #f0eef8;
+            vertical-align: middle;
+        }
+
+        .emp-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .emp-table tbody tr:hover {
+            background: #faf9ff;
+        }
+
+    .avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #EEEDFE;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 500;
+        color: #534AB7;
+        margin-right: 8px;
+        vertical-align: middle;
+        flex-shrink: 0;
+    }
+
+    .emp-cell {
+        display: flex;
+        align-items: center;
+    }
+
+    .dept-pill {
+        background: #EEEDFE;
+        color: #534AB7;
+        font-size: 11px;
+        font-weight: 500;
+        padding: 3px 9px;
+        border-radius: 20px;
+        display: inline-block;
+    }
+
+    .emp-number {
+        font-family: monospace;
+        font-size: 12px;
+        color: #534AB7;
+    }
+
+    .date-cell {
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+    .empty-state {
+        padding: 3rem;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 13px;
+    }
+
+        .empty-state i {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 10px;
+            color: #d1d5db;
+        }
+</style>
+
+<div class="page">
+
+    @* ── ADD EMPLOYEE FORM ── *@
+    <div class="card">
+        <div class="hdr">
+            <div class="hdr-icon"><i class="ti ti-user-plus"></i></div>
+            <div>
+                <div class="hdr-title">Employee addition</div>
+                <div class="hdr-sub">Register a new employee into the system</div>
+            </div>
+            <div class="hdr-badge"><i class="ti ti-shield-check" style="font-size:11px;margin-right:4px"></i>pcms</div>
+        </div>
+
+        <div class="body">
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert-success">
+                    <i class="ti ti-circle-check" style="font-size:16px"></i>
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert-error">
+                    <i class="ti ti-alert-circle" style="font-size:16px"></i>
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            @using (Html.BeginForm("Insert", "EmployeeDetails", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="grid2">
+                    <div class="fg">
+                        <label class="lbl">Emp. number<span class="req">*</span></label>
+                        @Html.TextBoxFor(m => m.EmpNumber, new { @class = "form-control", placeholder = "e.g. EMP-0042" })
+                        @Html.ValidationMessageFor(m => m.EmpNumber)
+                    </div>
+                    <div class="fg">
+                        <label class="lbl">Designation<span class="req">*</span></label>
+                        @Html.TextBoxFor(m => m.Designation, new { @class = "form-control", placeholder = "e.g. Engineer" })
+                        @Html.ValidationMessageFor(m => m.Designation)
+                    </div>
+                </div>
+
+                <div class="fg">
+                    <label class="lbl">Employee name<span class="req">*</span></label>
+                    @Html.TextBoxFor(m => m.EmpName, new { @class = "form-control", placeholder = "Full name" })
+                    @Html.ValidationMessageFor(m => m.EmpName)
+                </div>
+
+                <div class="fg">
+                    <label class="lbl">Dept code<span class="req">*</span></label>
+                    @Html.DropDownListFor(m => m.DeptCode,
+                        (SelectList)ViewBag.Departments,
+                        "— Select department —",
+                        new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.DeptCode)
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn-insert">
+                        <i class="ti ti-circle-check" style="font-size:16px"></i> Insert
+                    </button>
+                    <button type="reset" class="btn-reset">
+                        <i class="ti ti-refresh" style="font-size:16px"></i> Reset
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+
+    @* ── EMPLOYEE TABLE ── *@
+    <div class="card" style="max-width:900px">
+        <div class="tbl-hdr">
+            <div class="tbl-title">
+                <i class="ti ti-users" style="font-size:16px;color:#7F77DD"></i>
+                Employee records
+                <span class="count-badge">@ViewBag.EmployeeCount employee@(ViewBag.EmployeeCount == 1 ? "" : "s")</span>
+            </div>
+            <div class="search-wrap">
+                <i class="ti ti-search"></i>
+                <input type="text" id="searchInput" placeholder="Search employees…" onkeyup="filterTable()" />
+            </div>
+        </div>
+
+        @if (ViewBag.Employees != null && ((List<pcms.Models.EmployeeDetails>)ViewBag.Employees).Count > 0)
+        {
+            <table class="emp-table" id="empTable">
+                <thead>
+                    <tr>
+                        <th style="width:40px">#</th>
+                        <th style="width:110px">Emp. no</th>
+                        <th>Name</th>
+                        <th style="width:120px">Designation</th>
+                        <th style="width:200px">Department</th>
+                        <th style="width:90px">Added on</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var employees = (List<pcms.Models.EmployeeDetails>)ViewBag.Employees;
+                        int rowNum = 1;
+                    }
+                    @foreach (var emp in employees)
+                    {
+                        var initials = string.Join("", emp.EmpName.Trim().Split(' ')
+                                            .Take(2).Select(w => w[0].ToString().ToUpper()));
+                        <tr>
+                            <td style="color:#9ca3af;font-size:12px">@rowNum</td>
+                            <td class="emp-number">@emp.EmpNumber</td>
+                            <td>
+                                <div class="emp-cell">
+                                    <div class="avatar">@initials</div>
+                                    <span>@emp.EmpName</span>
+                                </div>
+                            </td>
+                            <td style="color:#6b7280">@emp.Designation</td>
+                            <td>
+                                <span class="dept-pill">@emp.DeptCode</span>
+                            </td>
+                            <td class="date-cell">@emp.CreatedAt.ToString("dd MMM yy")</td>
+                        </tr>
+                        rowNum++;
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="ti ti-user-off"></i>
+                No employees added yet. Use the form above to get started.
+            </div>
+        }
+    </div>
+
+</div>
+
+<script>
+    function filterTable() {
+        var input = document.getElementById('searchInput').value.toLowerCase();
+        var rows = document.querySelectorAll('#empTable tbody tr');
+        rows.forEach(function (row) {
+            var text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? '' : 'none';
+        });
+    }
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

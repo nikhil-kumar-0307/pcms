@@ -16,5 +16,6 @@ namespace pcms.Data
         public DbSet<LotMaster> LotMasters { get; set; }
         public DbSet<ItStock> ItStocks { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<EmployeeDetails> EmployeeDetails { get; set; }
     }
 }
