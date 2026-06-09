@@ -68,6 +68,81 @@ namespace pcms.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: EmployeeDetails/GoToUpdate?empNumber=090983
+        public ActionResult GoToUpdate(string empNumber)
+        {
+            if (string.IsNullOrWhiteSpace(empNumber))
+            {
+                TempData["ErrorMessage"] = "Please enter an employee number.";
+                return RedirectToAction("Index", "Admin");
+            }
+            return RedirectToAction("UpdateEmployeeDetails", new { empNumber = empNumber.Trim() });
+        }
+
+
+        // ── GET: EmployeeDetails/UpdateEmployeeDetails?empNumber=090983 ────────────
+        public ActionResult UpdateEmployeeDetails(string empNumber)
+        {
+            if (string.IsNullOrWhiteSpace(empNumber))
+            {
+                TempData["ErrorMessage"] = "No employee number provided.";
+                return RedirectToAction("Index", "Admin");
+            }
+
+            var employee = _db.EmployeeDetails
+                .FirstOrDefault(e => e.EmpNumber == empNumber && e.IsActive);
+
+            if (employee == null)
+            {
+                TempData["ErrorMessage"] = $"No active employee found with number \"{empNumber}\".";
+                return RedirectToAction("Index", "Admin");
+            }
+
+            var dto = new UpdateEmployeeDetailsDto
+            {
+                Id = employee.Id,
+                EmpNumber = employee.EmpNumber,
+                EmpName = employee.EmpName,
+                Designation = employee.Designation,
+                DeptCode = employee.DeptCode,
+                IsActive = employee.IsActive
+            };
+
+            ViewBag.Departments = GetDepartmentList(employee.DeptCode);
+            return View(dto);
+        }
+
+        // ── POST: EmployeeDetails/UpdateEmployeeDetails ────────────────────────────
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateEmployeeDetails(UpdateEmployeeDetailsDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Departments = GetDepartmentList(dto.DeptCode);
+                return View(dto);
+            }
+
+            var employee = _db.EmployeeDetails.Find(dto.Id);
+
+            if (employee == null)
+            {
+                TempData["ErrorMessage"] = "Employee record not found.";
+                return RedirectToAction("Index", "Admin");  // ← changed
+            }
+
+            employee.EmpName = dto.EmpName.Trim();
+            employee.Designation = dto.Designation.Trim();
+            employee.DeptCode = dto.DeptCode;
+            employee.IsActive = dto.IsActive;
+
+            _db.SaveChanges();
+
+            TempData["SuccessMessage"] = $"Employee \"{employee.EmpName}\" updated successfully.";
+            return RedirectToAction("UpdateEmployeeDetails", new { empNumber = employee.EmpNumber });
+        }
+
+
         protected override void Dispose(bool disposing)
         {
             if (disposing) _db.Dispose();

@@ -1,0 +1,664 @@
+﻿@model pcms.Models.DTOs.UpdateEmployeeDetailsDto
+@{
+    ViewBag.Title = "Update Employee Details";
+    Layout = null;
+
+    // Avatar initials from name
+    var nameParts = (Model.EmpName ?? "").Split(new[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+    var initials = nameParts.Length >= 2
+        ? $"{nameParts[0][0]}{nameParts[nameParts.Length - 1][0]}"
+        : (nameParts.Length == 1 ? nameParts[0][0].ToString() : "?");
+    initials = initials.ToUpper();
+
+    // Status label
+    var statusLabel = Model.IsActive ? "Active" : "Inactive";
+    var statusClass = Model.IsActive ? "badge-active" : "badge-inactive";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title</title>
+    <style>
+        /* ── Reset & base ───────────────────────────────────────────────── */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 16px 60px;
+        }
+
+        /* ── Page header strip ──────────────────────────────────────────── */
+        .page-header {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e3a5f;
+            text-decoration: none;
+            background: #fff;
+            border: 1px solid #d0dae6;
+            border-radius: 8px;
+            padding: 7px 14px;
+            transition: background .15s, border-color .15s;
+        }
+
+            .back-btn:hover {
+                background: #e8f0fa;
+                border-color: #1e3a5f;
+            }
+
+            .back-btn svg {
+                flex-shrink: 0;
+            }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e3a5f;
+            letter-spacing: .3px;
+        }
+
+        /* ── Main card ──────────────────────────────────────────────────── */
+        .card {
+            width: 100%;
+            max-width: 680px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(30,58,95,.10);
+            overflow: hidden;
+        }
+
+        /* ── Card hero / identity bar ───────────────────────────────────── */
+        .card-hero {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2e5fa3 100%);
+            padding: 32px 32px 28px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.18);
+            border: 3px solid rgba(255,255,255,.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffffff;
+            flex-shrink: 0;
+            letter-spacing: 1px;
+        }
+
+        .hero-info {
+            flex: 1;
+        }
+
+        .hero-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .hero-empno {
+            font-size: 13px;
+            color: rgba(255,255,255,.70);
+            font-weight: 500;
+            letter-spacing: .5px;
+        }
+
+        .badge-active, .badge-inactive {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .badge-active {
+            background: rgba(52,211,153,.20);
+            color: #a7f3d0;
+        }
+
+        .badge-inactive {
+            background: rgba(248,113,113,.20);
+            color: #fca5a5;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        .badge-active .badge-dot {
+            background: #34d399;
+        }
+
+        .badge-inactive .badge-dot {
+            background: #f87171;
+        }
+
+        /* ── Form section ───────────────────────────────────────────────── */
+        .card-body {
+            padding: 32px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #94a3b8;
+            margin-bottom: 18px;
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+            .field-grid .full-width {
+                grid-column: 1 / -1;
+            }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+            .field-group label {
+                font-size: 12px;
+                font-weight: 600;
+                color: #64748b;
+                text-transform: uppercase;
+                letter-spacing: .6px;
+            }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            color: #94a3b8;
+            pointer-events: none;
+            display: flex;
+        }
+
+        .field-group input[type="text"],
+        .field-group select {
+            width: 100%;
+            padding: 10px 12px 10px 36px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #1e293b;
+            background: #f8fafc;
+            transition: border-color .2s, box-shadow .2s, background .2s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+            .field-group input[type="text"]:focus,
+            .field-group select:focus {
+                outline: none;
+                border-color: #2e5fa3;
+                background: #ffffff;
+                box-shadow: 0 0 0 3px rgba(46,95,163,.12);
+            }
+
+        .field-group input[readonly] {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+
+        /* custom select arrow */
+        .select-arrow {
+            position: absolute;
+            right: 12px;
+            pointer-events: none;
+            color: #94a3b8;
+        }
+
+        /* validation */
+        .field-error {
+            font-size: 12px;
+            color: #ef4444;
+            margin-top: 2px;
+        }
+
+        .field-group input.input-error,
+        .field-group select.input-error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239,68,68,.10);
+        }
+
+        /* ── Status toggle ──────────────────────────────────────────────── */
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+
+        .status-row-label {
+            display: flex;
+            flex-direction: column;
+        }
+
+            .status-row-label span:first-child {
+                font-size: 14px;
+                font-weight: 600;
+                color: #1e293b;
+            }
+
+            .status-row-label span:last-child {
+                font-size: 12px;
+                color: #94a3b8;
+                margin-top: 2px;
+            }
+        /* toggle switch */
+        .toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+            .toggle input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: #cbd5e1;
+            border-radius: 34px;
+            cursor: pointer;
+            transition: background .25s;
+        }
+
+            .toggle-slider::before {
+                content: '';
+                position: absolute;
+                width: 18px;
+                height: 18px;
+                left: 3px;
+                bottom: 3px;
+                background: #fff;
+                border-radius: 50%;
+                transition: transform .25s;
+                box-shadow: 0 1px 3px rgba(0,0,0,.2);
+            }
+
+        .toggle input:checked + .toggle-slider {
+            background: #2e5fa3;
+        }
+
+            .toggle input:checked + .toggle-slider::before {
+                transform: translateX(20px);
+            }
+
+        /* ── Divider ────────────────────────────────────────────────────── */
+        .divider {
+            height: 1px;
+            background: #f1f5f9;
+            margin: 24px 0;
+        }
+
+        /* ── Alert banners ──────────────────────────────────────────────── */
+        .alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 500;
+            margin-bottom: 22px;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            border: 1.5px solid #bbf7d0;
+            color: #15803d;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1.5px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        .alert svg {
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ── Action buttons ─────────────────────────────────────────────── */
+        .action-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 11px 22px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all .2s;
+            font-family: inherit;
+            text-decoration: none;
+        }
+
+        .btn-ghost {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1.5px solid #e2e8f0;
+        }
+
+            .btn-ghost:hover {
+                background: #e2e8f0;
+            }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3a5f, #2e5fa3);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(30,58,95,.25);
+        }
+
+            .btn-primary:hover {
+                box-shadow: 0 4px 16px rgba(30,58,95,.35);
+                transform: translateY(-1px);
+            }
+
+            .btn-primary:active {
+                transform: translateY(0);
+            }
+
+        /* ── Responsive ─────────────────────────────────────────────────── */
+        @@media (max-width: 520px) {
+            .card-hero {
+                padding: 24px 20px;
+            }
+
+            .card-body {
+                padding: 22px 20px;
+            }
+
+            .field-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-row {
+                flex-direction: column-reverse;
+            }
+
+            .btn {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Page header -->
+    <div class="page-header">
+        <a href="@Url.Action("Index", "Admin")" class="back-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 5l-7 7 7 7" />
+            </svg>
+            Dashboard
+        </a>
+        <h1 class="page-title">Update Employee Details</h1>
+    </div>
+
+    <!-- Main card -->
+    <div class="card">
+
+        <!-- Hero / identity bar -->
+        <div class="card-hero">
+            <div class="avatar">@initials</div>
+            <div class="hero-info">
+                <div class="hero-name">@Model.EmpName</div>
+                <div class="hero-empno">EMP # @Model.EmpNumber</div>
+                <div class="@statusClass">
+                    <span class="badge-dot"></span>
+                    @statusLabel
+                </div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="card-body">
+
+            @* ── Success / Error banners ── *@
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-error">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            <div class="section-label">Employee Information</div>
+
+            @using (Html.BeginForm("UpdateEmployeeDetails", "EmployeeDetails", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Id)
+                @Html.HiddenFor(m => m.EmpNumber)
+
+                <div class="field-grid">
+
+                    <!-- Employee Number (read-only) -->
+                    <div class="field-group">
+                        <label>Employee Number</label>
+                        <div class="input-wrap">
+                            <span class="input-icon">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="7" width="20" height="14" rx="2" />
+                                    <path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z" />
+                                </svg>
+                            </span>
+                            <input type="text" value="@Model.EmpNumber" readonly />
+                        </div>
+                    </div>
+
+                    <!-- Employee Name -->
+                    <div class="field-group">
+                        @Html.LabelFor(m => m.EmpName)
+                        <div class="input-wrap">
+                            <span class="input-icon">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                            </span>
+                            @Html.TextBoxFor(m => m.EmpName, new
+                            {
+                                @class = ViewData.ModelState["EmpName"]?.Errors.Count > 0 ? "input-error" : "",
+                                placeholder = "Full name"
+                            })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.EmpName, "", new { @class = "field-error" })
+                    </div>
+
+                    <!-- Designation -->
+                    <div class="field-group">
+                        @Html.LabelFor(m => m.Designation)
+                        <div class="input-wrap">
+                            <span class="input-icon">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                </svg>
+                            </span>
+                            @Html.TextBoxFor(m => m.Designation, new
+                            {
+                                @class = ViewData.ModelState["Designation"]?.Errors.Count > 0 ? "input-error" : "",
+                                placeholder = "e.g. W8, Engineer"
+                            })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Designation, "", new { @class = "field-error" })
+                    </div>
+
+                    <!-- Department -->
+                    <div class="field-group">
+                        @Html.LabelFor(m => m.DeptCode)
+                        <div class="input-wrap">
+                            <span class="input-icon">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                    <polyline points="9 22 9 12 15 12 15 22" />
+                                </svg>
+                            </span>
+                            @Html.DropDownListFor(m => m.DeptCode,
+                                (SelectList)ViewBag.Departments,
+                                "— Select Department —",
+                                new
+                                     {
+                                    @class = ViewData.ModelState["DeptCode"]?.Errors.Count > 0 ? "input-error" : ""
+                                })
+                            <span class="select-arrow">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                            </span>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.DeptCode, "", new { @class = "field-error" })
+                    </div>
+
+                </div><!-- /field-grid -->
+
+                <div class="divider"></div>
+
+                <!-- Status toggle -->
+                <div class="section-label">Account Status</div>
+                <div class="status-row">
+                    <div class="status-row-label">
+                        <span>Active Account</span>
+                        <span>Inactive employees cannot log in or submit suggestions</span>
+                    </div>
+                    <div class="toggle-wrap">
+                        <span class="toggle-text" id="toggle-label">@(Model.IsActive ? "Active" : "Inactive")</span>
+                        <label class="toggle" title="Toggle account status">
+                            @Html.CheckBoxFor(m => m.IsActive)
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="action-row">
+                    <a href="@Url.Action("Index", "Dashboard")" class="btn btn-ghost">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                            <polyline points="17 21 17 13 7 13 7 21" />
+                            <polyline points="7 3 7 8 15 8" />
+                        </svg>
+                        Save Changes
+                    </button>
+                </div>
+
+            }<!-- /form -->
+
+        </div><!-- /card-body -->
+    </div><!-- /card -->
+
+    <script>
+        // Live toggle label update
+        var toggle = document.querySelector('input[name="IsActive"]');
+        var label  = document.getElementById('toggle-label');
+        if (toggle && label) {
+            toggle.addEventListener('change', function () {
+                label.textContent = this.checked ? 'Active' : 'Inactive';
+            });
+        }
+    </script>
+
+</body>
+</html>

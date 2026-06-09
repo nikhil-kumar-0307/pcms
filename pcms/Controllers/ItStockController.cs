@@ -252,6 +252,7 @@ namespace pcms.Controllers
                     AssetCode = s.AssetCode,
                     PvCode = s.PvCode,
                     McNum = s.McNum,
+                    SiNum = s.SiNum,        // ← NEW
                     IpNo = s.IpNo,
                     PhoneNo = s.PhoneNo,
                     Remarks = s.Remarks,
@@ -280,6 +281,7 @@ namespace pcms.Controllers
             dto.AssetCode = src.AssetCode;
             dto.PvCode = src.PvCode;
             dto.McNum = src.McNum;
+            dto.SiNum = src.SiNum;          // ← NEW
             dto.PTag = src.PTag;
             dto.IpNo = src.IpNo;
             dto.MacAddress = src.MacAddress;
@@ -308,6 +310,7 @@ namespace pcms.Controllers
             dest.AssetCode = dto.AssetCode?.Trim();
             dest.PvCode = dto.PvCode?.Trim();
             dest.McNum = dto.McNum?.Trim();
+            dest.SiNum = dto.SiNum?.Trim();  // ← NEW
             dest.PTag = dto.PTag?.Trim();
             dest.IpNo = dto.IpNo?.Trim();
             dest.MacAddress = dto.MacAddress?.Trim();

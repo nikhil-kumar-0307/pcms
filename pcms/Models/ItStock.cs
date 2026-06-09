@@ -102,6 +102,11 @@ namespace PCMS.Models
         [Display(Name = "Mc Num")]
         public string McNum { get; set; }
 
+        /// <summary>Si Number (Serial / Item Number)</summary>
+        [StringLength(100)]
+        [Display(Name = "Si Num")]
+        public string SiNum { get; set; }
+
         [StringLength(50)]
         [Display(Name = "P TAG")]
         public string PTag { get; set; }

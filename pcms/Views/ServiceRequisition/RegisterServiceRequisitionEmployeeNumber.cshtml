@@ -1,0 +1,802 @@
+﻿@model PCMS.DTOs.RegisterServiceRequisitionEmployeeNumberDto
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Service Requisition — PCMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #f7f3ff;
+            --white: #ffffff;
+            --coral: #ff5c5c;
+            --coral2: #ff8080;
+            --coral-bg: #fff5f5;
+            --pink: #f472b6;
+            --pink-bg: #fdf2f8;
+            --orange: #f97316;
+            --orange-bg: #fff7ed;
+            --yellow: #fbbf24;
+            --yellow-bg: #fffbeb;
+            --blue: #3b82f6;
+            --blue-bg: #eff6ff;
+            --purple: #8b5cf6;
+            --purple-bg: #f5f3ff;
+            --teal: #06b6d4;
+            --teal-bg: #ecfeff;
+            --green: #10b981;
+            --green-bg: #ecfdf5;
+            --text: #1e1b4b;
+            --text2: #4b5563;
+            --muted: #9ca3af;
+            --border: #e5e7eb;
+            --border2: #f3f4f6;
+            --sans: 'Plus Jakarta Sans', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        html, body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ══ NAV ══════════════════════════════════════════════════ */
+        .nav {
+            background: var(--white);
+            border-bottom: 2px solid var(--border);
+            height: 56px;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 12px rgba(0,0,0,0.07);
+        }
+
+        .nav-brand {
+            font-family: var(--mono);
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: 0.06em;
+            color: var(--text);
+        }
+
+            .nav-brand em {
+                color: var(--coral);
+                font-style: normal;
+            }
+
+        .nav-sep {
+            color: var(--border);
+            font-size: 1.3rem;
+        }
+
+        .nav-crumb {
+            font-size: 0.78rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-badge {
+            font-family: var(--mono);
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--orange), var(--coral));
+            color: white;
+            border-radius: 20px;
+            padding: 4px 14px;
+        }
+
+        .nav-user {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            color: var(--text2);
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 14px;
+        }
+
+        .nav-link {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text2);
+            text-decoration: none;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 14px;
+            transition: all 0.15s;
+        }
+
+            .nav-link:hover {
+                border-color: var(--blue);
+                color: var(--blue);
+                background: var(--blue-bg);
+            }
+
+            .nav-link.danger:hover {
+                border-color: var(--coral);
+                color: var(--coral);
+                background: var(--coral-bg);
+            }
+
+        /* ══ PAGE ══════════════════════════════════════════════════ */
+        .page {
+            max-width: 1700px;
+            margin: 0 auto;
+            padding: 28px 28px 56px;
+        }
+
+        /* ══ HERO SEARCH CARD ══════════════════════════════════════ */
+        .hero-card {
+            background: var(--white);
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            padding: 0;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 28px rgba(0,0,0,0.07);
+            overflow: hidden;
+        }
+
+        .hero-top {
+            background: linear-gradient(135deg, #fff7ed 0%, #fdf2f8 50%, #eff6ff 100%);
+            border-bottom: 2px solid var(--border);
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .hero-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--orange), var(--coral));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+            flex-shrink: 0;
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-label {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--orange);
+            margin-bottom: 4px;
+        }
+
+        .hero-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+            .hero-title span {
+                color: var(--coral);
+            }
+
+        /* Search row */
+        .search-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .emp-input {
+            font-family: var(--mono);
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: var(--white);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 11px 20px;
+            outline: none;
+            width: 180px;
+            color: var(--text);
+            transition: all 0.15s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+            .emp-input:focus {
+                border-color: var(--orange);
+                box-shadow: 0 0 0 4px rgba(249,115,22,0.12);
+            }
+
+            .emp-input::placeholder {
+                font-size: 0.75rem;
+                font-weight: 400;
+                text-transform: none;
+                color: var(--muted);
+            }
+
+        .btn-go {
+            font-family: var(--mono);
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            background: linear-gradient(135deg, var(--orange), var(--coral));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 30px;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+        }
+
+            .btn-go:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 20px rgba(249,115,22,0.42);
+            }
+
+        /* stat pills inside hero */
+        .hero-stats {
+            display: flex;
+            gap: 10px;
+            padding: 14px 32px;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 100px;
+            padding: 6px 16px;
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            color: var(--text2);
+        }
+
+        .stat-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* ══ ALERT ═════════════════════════════════════════════════ */
+        .alert {
+            border-radius: 12px;
+            padding: 13px 20px;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1.5px solid;
+        }
+
+        .alert-err {
+            background: var(--coral-bg);
+            border-color: #fca5a5;
+            color: #991b1b;
+        }
+
+        .alert-ok {
+            background: var(--green-bg);
+            border-color: #86efac;
+            color: #166534;
+        }
+
+        /* ══ RESULTS HEADER ════════════════════════════════════════ */
+        .results-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .rh-accent {
+            width: 5px;
+            height: 40px;
+            border-radius: 4px;
+            background: linear-gradient(180deg, var(--orange), var(--pink));
+            flex-shrink: 0;
+        }
+
+        .rh-label {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .rh-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            line-height: 1.1;
+        }
+
+            .rh-title .emp {
+                color: var(--orange);
+            }
+
+            .rh-title .name {
+                color: var(--text);
+            }
+
+        .rh-badges {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+        }
+
+        .rh-badge {
+            font-family: var(--mono);
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-radius: 100px;
+            padding: 5px 16px;
+            border: 1.5px solid;
+        }
+
+            .rh-badge.count {
+                background: var(--orange-bg);
+                color: var(--orange);
+                border-color: #fed7aa;
+            }
+
+        /* ══ TABLE ═════════════════════════════════════════════════ */
+        .table-card {
+            background: var(--white);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 28px rgba(0,0,0,0.06);
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+            .table-scroll::-webkit-scrollbar {
+                height: 5px;
+            }
+
+            .table-scroll::-webkit-scrollbar-track {
+                background: var(--bg);
+            }
+
+            .table-scroll::-webkit-scrollbar-thumb {
+                background: var(--border);
+                border-radius: 4px;
+            }
+
+        table.asset-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+        }
+
+        /* Colorful column headers */
+        .asset-table thead tr {
+            border-bottom: 2px solid var(--border);
+        }
+
+        .asset-table thead th {
+            padding: 13px 16px;
+            text-align: left;
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            background: var(--white);
+        }
+        /* individual header color strips */
+        .th-empno {
+            color: var(--blue);
+            border-top: 3px solid var(--blue);
+        }
+
+        .th-empname {
+            color: var(--purple);
+            border-top: 3px solid var(--purple);
+        }
+
+        .th-mcnum {
+            color: var(--orange);
+            border-top: 3px solid var(--orange);
+        }
+
+        .th-machine {
+            color: var(--pink);
+            border-top: 3px solid var(--pink);
+        }
+
+        .th-grade {
+            color: var(--yellow);
+            border-top: 3px solid var(--yellow);
+        }
+
+        .th-dept {
+            color: var(--teal);
+            border-top: 3px solid var(--teal);
+        }
+
+        .th-loc {
+            color: var(--green);
+            border-top: 3px solid var(--green);
+        }
+
+        .th-ip {
+            color: var(--coral);
+            border-top: 3px solid var(--coral);
+        }
+
+        .th-sinum {
+            color: var(--purple);
+            border-top: 3px solid var(--purple);
+        }
+
+        .asset-table tbody tr {
+            border-bottom: 1px solid var(--border2);
+            transition: background 0.1s;
+        }
+
+            .asset-table tbody tr:last-child {
+                border-bottom: none;
+            }
+
+            .asset-table tbody tr:hover {
+                background: #fffbf5;
+            }
+
+            .asset-table tbody tr:nth-child(even) {
+                background: #fafafa;
+            }
+
+                .asset-table tbody tr:nth-child(even):hover {
+                    background: #fffbf5;
+                }
+
+        .asset-table tbody td {
+            padding: 11px 16px;
+            color: var(--text2);
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        /* column cell styles */
+        .td-empno {
+            font-weight: 800;
+            color: var(--blue);
+            font-size: 0.78rem;
+        }
+
+        .td-empname {
+            font-weight: 700;
+            color: var(--text);
+            font-family: var(--sans);
+            font-size: 0.8rem;
+        }
+
+        .td-mcnum a {
+            font-weight: 700;
+            color: var(--orange);
+            text-decoration: none;
+            padding: 3px 10px;
+            background: var(--orange-bg);
+            border: 1.5px solid #fed7aa;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+
+            .td-mcnum a:hover {
+                background: #fed7aa;
+                color: #c2410c;
+            }
+
+        .td-machine {
+            color: var(--text2);
+            font-weight: 500;
+        }
+
+        .td-grade {
+            font-weight: 800;
+            font-size: 0.82rem;
+        }
+
+        .grade-chip {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            background: var(--yellow-bg);
+            color: #92400e;
+            border: 1.5px solid #fde68a;
+        }
+
+        .td-dept {
+            color: var(--teal);
+            font-weight: 600;
+        }
+
+        .td-loc {
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        .td-ip {
+            color: var(--coral);
+            font-weight: 600;
+        }
+
+            .td-ip.is-x {
+                color: var(--muted);
+                font-weight: 400;
+                font-style: italic;
+            }
+
+        .td-sinum {
+            color: var(--purple);
+            font-weight: 600;
+        }
+
+            .td-sinum.is-x {
+                color: var(--muted);
+                font-weight: 400;
+                font-style: italic;
+            }
+
+        /* ══ EMPTY STATE ═══════════════════════════════════════════ */
+        .empty-card {
+            background: var(--white);
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 72px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 3.5rem;
+            opacity: 0.35;
+            margin-bottom: 14px;
+        }
+
+        .empty-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text2);
+            margin-bottom: 6px;
+        }
+
+        .empty-sub {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+
+        @@media (max-width: 768px) {
+            .page {
+                padding: 16px;
+            }
+
+            .hero-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-row {
+                width: 100%;
+            }
+
+            .emp-input {
+                flex: 1;
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ══ NAV ══════════════════════════════════════════════════════════ -->
+    <nav class="nav">
+        <span class="nav-brand">PC<em>MS</em></span>
+        <span class="nav-sep">/</span>
+        <span class="nav-crumb">Service Requisition</span>
+        <div class="nav-right">
+            <span class="nav-badge">SR Module</span>
+            <span class="nav-user">@Session["EmployeeNumber"]</span>
+            <a href="@Url.Action("Index","Home")" class="nav-link">← Back</a>
+            <a href="@Url.Action("Logout","Account")" class="nav-link danger">Logout</a>
+        </div>
+    </nav>
+
+    <!-- ══ PAGE ════════════════════════════════════════════════════════ -->
+    <div class="page">
+
+        <!-- ① HERO SEARCH CARD -->
+        <div class="hero-card">
+            <div class="hero-top">
+                <div class="hero-icon">📋</div>
+                <div class="hero-text">
+                    <p class="hero-label">Service Requisition Module</p>
+                    <p class="hero-title">Register Service Requisition <span>↗</span></p>
+                </div>
+
+                @using (Html.BeginForm("AssetHolderDetails", "ServiceRequisition", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="search-row">
+                        @Html.TextBoxFor(m => m.EmpNo, new
+                        {
+                            @class = "emp-input",
+                            placeholder = "Enter Emp No.",
+                            autocomplete = "off",
+                            maxlength = "20",
+                            id = "EmpNoInput"
+                        })
+                        <button type="submit" class="btn-go">Go →</button>
+                    </div>
+                }
+            </div>
+
+            @if (Model.ResultsLoaded)
+            {
+                <div class="hero-stats">
+                    <div class="stat-pill">
+                        <span class="stat-dot" style="background:var(--blue);"></span>
+                        Emp: <strong style="color:var(--blue); margin-left:4px;">@Model.EmpNo</strong>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="stat-dot" style="background:var(--purple);"></span>
+                        Name: <strong style="color:var(--purple); margin-left:4px;">@Model.EmpName</strong>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="stat-dot" style="background:var(--orange);"></span>
+                        Total Assets: <strong style="color:var(--orange); margin-left:4px;">@Model.TotalAssets</strong>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- ② ALERTS -->
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-err">✖ &nbsp;@Model.ErrorMessage</div>
+        }
+
+        <!-- ③ RESULTS -->
+        @if (Model.ResultsLoaded)
+        {
+            <div class="results-header">
+                <div class="rh-accent"></div>
+                <div>
+                    <p class="rh-label">Asset Holder Details</p>
+                    <p class="rh-title">
+                        <span class="emp">@Model.EmpNo</span>
+                        <span style="color:var(--muted); font-weight:400;"> — </span>
+                        <span class="name">@Model.EmpName</span>
+                    </p>
+                </div>
+                <div class="rh-badges">
+                    <span class="rh-badge count">@Model.TotalAssets Asset(s)</span>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-scroll">
+                    <table class="asset-table">
+                        <thead>
+                            <tr>
+                                <th class="th-empno">Emp. No</th>
+                                <th class="th-empname">Emp Name</th>
+                                <th class="th-mcnum">Mcn. No.</th>
+                                <th class="th-machine">Machine Name</th>
+                                <th class="th-grade">Grade</th>
+                                <th class="th-dept">Dept</th>
+                                <th class="th-loc">Location</th>
+                                <th class="th-ip">IP Add</th>
+                                <th class="th-sinum">SI Num</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.AssetRows)
+                            {
+                                <tr>
+                                    <td class="td-empno">@row.EmpNo</td>
+                                    <td class="td-empname">@row.EmpName</td>
+                                    <td class="td-mcnum">
+                                        @if (!string.IsNullOrEmpty(row.McNum))
+                                        {
+                                            <a href="@Url.Action("Index","ItStock", new { lotNo = row.LotNo })">
+                                                @row.McNum
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span style="color:var(--muted);">—</span>
+                                        }
+                                    </td>
+                                    <td class="td-machine">@(string.IsNullOrEmpty(row.MachineName) ? "—" : row.MachineName)</td>
+                                    <td class="td-grade">
+                                        <span class="grade-chip">@(string.IsNullOrEmpty(row.Grade) ? "—" : row.Grade)</span>
+                                    </td>
+                                    <td class="td-dept">@(string.IsNullOrEmpty(row.Dept) ? "—" : row.Dept)</td>
+                                    <td class="td-loc">@(string.IsNullOrEmpty(row.Location) ? "—" : row.Location)</td>
+                                    <td class="td-ip @(string.IsNullOrEmpty(row.IpAdd) || row.IpAdd == "X" ? "is-x" : "")">
+                                        @(string.IsNullOrEmpty(row.IpAdd) ? "X" : row.IpAdd)
+                                    </td>
+                                    <td class="td-sinum @(string.IsNullOrEmpty(row.SiNum) || row.SiNum == "X" ? "is-x" : "")">
+                                        @(string.IsNullOrEmpty(row.SiNum) ? "X" : row.SiNum)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else if (string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="empty-card">
+                <div class="empty-icon">🗂️</div>
+                <p class="empty-title">Enter an Employee Number to view assets</p>
+                <p class="empty-sub">Type the Emp No. above and click Go →</p>
+            </div>
+        }
+
+    </div>
+
+    <script>
+        var inp = document.getElementById('EmpNoInput');
+        if (inp) {
+            inp.addEventListener('input', function () {
+                var pos = this.selectionStart;
+                this.value = this.value.toUpperCase();
+                this.setSelectionRange(pos, pos);
+            });
+            inp.focus();
+        }
+    </script>
+</body>
+</html>

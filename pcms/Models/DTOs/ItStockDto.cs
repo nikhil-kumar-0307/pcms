@@ -104,6 +104,11 @@ namespace PCMS.DTOs
         [Display(Name = "Mc Num")]
         public string McNum { get; set; }
 
+        /// <summary>Si Number (Serial / Item Number)</summary>
+        [StringLength(100)]
+        [Display(Name = "Si Num")]
+        public string SiNum { get; set; }
+
         [StringLength(50)]
         [Display(Name = "P TAG")]
         public string PTag { get; set; }
@@ -160,6 +165,7 @@ namespace PCMS.DTOs
         public string AssetCode { get; set; }
         public string PvCode { get; set; }
         public string McNum { get; set; }
+        public string SiNum { get; set; }       // ← NEW: Si Number
         public string IpNo { get; set; }
         public string PhoneNo { get; set; }
         public string Remarks { get; set; }

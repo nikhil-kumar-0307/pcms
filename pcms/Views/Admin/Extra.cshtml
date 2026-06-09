@@ -181,9 +181,11 @@
                 </div>
 
                 <div class="row-item">
-                    <a href="#" class="link-teal">Register Service Requisition</a>
-                    <input type="text" placeholder="Emp No." />
-                    <a href="#" class="go-btn go-teal">Go</a>
+                    <a href="@Url.Action("Index", "ServiceRequisition")" class="link-teal">
+                        Register Service Requisition
+                    </a>
+                    <input type="text" id="srEmpNoInput" placeholder="Emp No." maxlength="20" />
+                    <a href="#" class="go-btn go-teal" onclick="goToServiceRequisition(); return false;">Go</a>
                 </div>
 
                 <div class="row-item">
@@ -217,15 +219,18 @@
                 </div>
 
                 <div class="row-item">
-                    <a href="#" class="link-teal">Update Emp Details</a>
-                    <input type="text" placeholder="Emp No." />
-                    <a href="#" class="go-btn go-teal">Go</a>
+                    <span class="link-teal">Update Emp Details</span>
+                    @using (Html.BeginForm("GoToUpdate", "EmployeeDetails", FormMethod.Get,
+                            new { style = "display:inline-flex; align-items:center; gap:6px;" }))
+                    {
+                        <input type="text" name="empNumber" placeholder="Emp No." class="red-input" required autocomplete="off" />
+                        <button type="submit" class="go-btn go-teal">Go</button>}
                 </div>
 
                 <div class="row-item">
                     <a href="#" class="link-teal">Update Asset Emp Details</a>
                     <input type="text" placeholder="Emp No." />
-                    <a href="#" class="go-btn go-teal">Go</a>                    
+                    <a href="#" class="go-btn go-teal">Go</a>
                 </div>
 
                 <div class="row-item">
@@ -308,7 +313,7 @@
 
                     <div class="row-item">
                         <a href="@Url.Action("Create", "Department")" class="link-amber">Dept Entry Form</a>
-                        
+
                         <span class="sep">·</span>
                         <a href="#" class="link-amber">Update Dept name</a>
                     </div>
@@ -455,5 +460,21 @@
 
         </div>
     </main>
+
+    <script>
+    function goToServiceRequisition() {
+        var empNo = document.getElementById('srEmpNoInput').value.trim();
+        if (!empNo) {
+            alert('Please enter an Employee No.');
+            return;
+        }
+        window.location.href = '@Url.Action("Index", "ServiceRequisition")?empNo=' + encodeURIComponent(empNo.toUpperCase());
+    }
+
+    // Also allow pressing Enter inside the input
+    document.getElementById('srEmpNoInput').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') goToServiceRequisition();
+    });
+    </script>
 </body>
 </html>

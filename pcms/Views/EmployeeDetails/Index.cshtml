@@ -1,504 +1,694 @@
 ﻿@model pcms.Models.DTOs.EmployeeDetailsDto
 @{
-    ViewBag.Title = "Employee Addition";
+    ViewBag.Title = "Employee Registry";
     Layout = null;
 }
 
-<link href="https://cdn.jsdelivr.net/npm/tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
 <style>
-    * {
+    *, *::before, *::after {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
     }
 
-    .page {
-        padding: 1.5rem;
+    :root {
+        --crimson: #7B1C2E;
+        --crimson-dk: #5A1220;
+        --crimson-lt: #F5E6E9;
+        --rose: #C0395A;
+        --gold: #C9830A;
+        --gold-lt: #FEF3C7;
+        --teal: #0F7173;
+        --teal-lt: #CCEEEF;
+        --navy: #1B2A4A;
+        --navy-lt: #E8ECF4;
+        --bg: #F2EDED;
+        --surface: #FFFFFF;
+        --border: #DDD0D3;
+        --text-1: #1A0A0D;
+        --text-2: #5A3A40;
+        --text-3: #9E7A82;
+        --mono: 'IBM Plex Mono', monospace;
+        --sans: 'Inter', sans-serif;
+        --r: 6px;
     }
 
-    .card {
-        background: #fff;
-        border-radius: 16px;
-        border: 1px solid #e8e6f0;
-        overflow: hidden;
-        margin-bottom: 1.5rem;
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
+    body {
+        font-family: var(--sans);
+        background: var(--bg);
+        min-height: 100vh;
+        color: var(--text-1);
     }
 
-    .hdr {
-        background: #3C3489;
-        padding: 1.25rem 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
-
-    .hdr-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        background: #534AB7;
+    /* ── TITLE BAR ─────────────────────────────────────────────────────────── */
+    .title-bar {
+        background: var(--crimson-dk);
+        padding: 0 28px;
+        height: 46px;
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
     }
 
-        .hdr-icon i {
-            font-size: 20px;
-            color: #EEEDFE;
+    .title-bar-text {
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: #fff;
+    }
+
+    .title-bar-brand {
+        position: absolute;
+        left: 28px;
+        font-family: var(--mono);
+        font-size: 13px;
+        color: rgba(255,255,255,.40);
+        letter-spacing: 1px;
+    }
+
+        .title-bar-brand span {
+            color: var(--gold);
         }
 
-    .hdr-title {
-        font-size: 16px;
+    /* ── WRAPPER ────────────────────────────────────────────────────────────── */
+    .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 24px 60px;
+    }
+
+    /* ── FORM SECTION ───────────────────────────────────────────────────────── */
+    .form-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        margin-bottom: 28px;
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(90,18,32,.08);
+    }
+
+    .form-card-hdr {
+        background: var(--crimson);
+        padding: 10px 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-card-hdr-sq {
+        width: 10px;
+        height: 10px;
+        background: var(--gold);
+        border-radius: 2px;
+        flex-shrink: 0;
+    }
+
+    .form-card-hdr-title {
+        font-family: var(--mono);
+        font-size: 11.5px;
         font-weight: 500;
-        color: #EEEDFE;
-        letter-spacing: 0.01em;
-    }
-
-    .hdr-sub {
-        font-size: 12px;
-        color: #AFA9EC;
-        margin-top: 2px;
-    }
-
-    .hdr-badge {
-        margin-left: auto;
-        background: #534AB7;
-        color: #CECBF6;
-        font-size: 11px;
-        font-weight: 500;
-        padding: 4px 10px;
-        border-radius: 20px;
-    }
-
-    .body {
-        padding: 1.5rem;
-    }
-
-    .grid2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-        margin-bottom: 14px;
-    }
-
-    .fg {
-        margin-bottom: 14px;
-    }
-
-    .lbl {
-        display: block;
-        font-size: 11px;
-        font-weight: 600;
+        letter-spacing: 1.5px;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: #6b7280;
-        margin-bottom: 6px;
+        color: #fff;
     }
 
-    .req {
-        color: #D85A30;
-        margin-left: 2px;
+    .form-body {
+        padding: 22px 22px 20px;
     }
 
-    .form-control {
-        width: 100%;
-        padding: 9px 12px;
-        font-size: 14px;
-        color: #111;
+    /* field row */
+    .f-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 0;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+
+    .f-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-right: 28px;
+        margin-bottom: 10px;
+    }
+
+    .f-lbl {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-2);
+        white-space: nowrap;
+        min-width: 90px;
+    }
+
+    .f-inp {
+        padding: 7px 11px;
+        font-size: 13px;
+        font-family: var(--sans);
+        color: var(--text-1);
         background: #fff;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
         outline: none;
+        width: 220px;
         transition: border-color .15s, box-shadow .15s;
     }
 
-        .form-control:focus {
-            border-color: #7F77DD;
-            box-shadow: 0 0 0 3px rgba(127,119,221,.15);
+        .f-inp:focus {
+            border-color: var(--crimson);
+            box-shadow: 0 0 0 3px rgba(123,28,46,.10);
+        }
+
+        .f-inp.mono-inp {
+            font-family: var(--mono);
+            font-size: 12.5px;
+        }
+
+        .f-inp.short {
+            width: 140px;
+        }
+
+    /* select */
+    .sel-wrap {
+        position: relative;
+        display: inline-block;
+    }
+
+        .sel-wrap .f-inp {
+            padding-right: 28px;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .sel-wrap::after {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid var(--text-3);
+            pointer-events: none;
         }
 
     .field-validation-error {
         display: block;
         font-size: 11px;
-        color: #D85A30;
-        margin-top: 4px;
+        color: var(--rose);
+        font-family: var(--mono);
+        margin-top: 3px;
     }
 
-    .actions {
+    /* action row */
+    .form-actions {
         display: flex;
-        gap: 10px;
-        padding-top: 16px;
-        border-top: 1px solid #f0eef8;
-        margin-top: 4px;
+        align-items: center;
+        gap: 14px;
+        padding-top: 6px;
+        border-top: 1px dashed var(--border);
+        margin-top: 8px;
     }
 
-    .btn-insert {
-        flex: 1;
-        background: #3C3489;
-        color: #EEEDFE;
+    .btn-submit {
+        background: var(--crimson);
+        color: #fff;
         border: none;
-        padding: 10px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
+        padding: 9px 22px;
+        border-radius: var(--r);
+        font-size: 13px;
+        font-weight: 600;
+        font-family: var(--mono);
+        letter-spacing: .5px;
         cursor: pointer;
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        justify-content: center;
-        gap: 7px;
+        gap: 8px;
         transition: background .15s;
     }
 
-        .btn-insert:hover {
-            background: #534AB7;
+        .btn-submit::before {
+            content: '▶';
+            font-size: 10px;
         }
 
-    .btn-reset {
-        flex: 1;
-        background: transparent;
-        color: #6b7280;
-        border: 1px solid #d1d5db;
-        padding: 10px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
+        .btn-submit:hover {
+            background: var(--rose);
+        }
+
+    .btn-back {
+        font-size: 12.5px;
+        font-family: var(--mono);
+        color: var(--text-3);
+        text-decoration: none;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 7px;
-        transition: background .15s;
+        background: none;
+        border: none;
+        transition: color .15s;
     }
 
-        .btn-reset:hover {
-            background: #f9f8ff;
+        .btn-back:hover {
+            color: var(--crimson);
         }
 
-    .alert-success {
-        background: #EAF3DE;
-        border: 1px solid #97C459;
-        border-radius: 8px;
-        padding: 10px 14px;
-        font-size: 13px;
-        color: #27500A;
+    /* ── ALERTS ─────────────────────────────────────────────────────────────── */
+    .alert {
+        padding: 9px 14px;
+        border-radius: var(--r);
+        font-size: 12.5px;
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin-bottom: 14px;
+        gap: 9px;
+        margin-bottom: 16px;
+        font-family: var(--mono);
+        border-left: 3px solid;
     }
 
-    .alert-error {
-        background: #FCEBEB;
-        border: 1px solid #F09595;
-        border-radius: 8px;
-        padding: 10px 14px;
-        font-size: 13px;
-        color: #791F1F;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 14px;
+    .alert-ok {
+        background: #EAF5E9;
+        color: #1A4D1A;
+        border-color: #4CAF50;
     }
 
-    /* ── Table card ── */
+    .alert-err {
+        background: var(--crimson-lt);
+        color: var(--crimson-dk);
+        border-color: var(--rose);
+    }
+
+    /* ── TABLE SECTION ──────────────────────────────────────────────────────── */
+    .tbl-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(90,18,32,.08);
+    }
+
     .tbl-hdr {
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #f0eef8;
+        background: var(--crimson);
+        padding: 10px 18px;
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
 
-    .tbl-title {
-        font-size: 14px;
-        font-weight: 500;
-        color: #111;
+    .tbl-hdr-left {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
     }
 
-    .count-badge {
-        background: #EEEDFE;
-        color: #534AB7;
-        font-size: 11px;
+    .tbl-hdr-sq {
+        width: 10px;
+        height: 10px;
+        background: var(--gold);
+        border-radius: 2px;
+    }
+
+    .tbl-hdr-title {
+        font-family: var(--mono);
+        font-size: 11.5px;
         font-weight: 500;
-        padding: 3px 9px;
-        border-radius: 20px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #fff;
     }
 
-    .search-wrap {
+    .tbl-total {
+        font-family: var(--mono);
+        font-size: 11px;
+        background: rgba(255,255,255,.15);
+        color: #fff;
+        padding: 3px 10px;
+        border-radius: 4px;
+        letter-spacing: .5px;
+    }
+
+    /* search */
+    .tbl-toolbar {
+        padding: 10px 18px;
+        border-bottom: 1px solid var(--border);
+        background: #FDF8F8;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .srch-wrap {
         position: relative;
     }
 
-        .search-wrap i {
-            position: absolute;
-            left: 9px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 15px;
-            color: #9ca3af;
-        }
-
-        .search-wrap input {
-            width: 200px;
-            padding: 7px 10px 7px 30px;
-            font-size: 13px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
+        .srch-wrap input {
+            padding: 6px 10px 6px 28px;
+            font-size: 12px;
+            font-family: var(--sans);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r);
             outline: none;
-            transition: border-color .15s;
+            width: 200px;
+            background: #fff;
         }
 
-            .search-wrap input:focus {
-                border-color: #7F77DD;
+            .srch-wrap input:focus {
+                border-color: var(--crimson);
             }
 
-    .emp-table {
+        .srch-wrap svg {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-3);
+            pointer-events: none;
+        }
+
+    /* table */
+    .emp-tbl {
         width: 100%;
         border-collapse: collapse;
-        table-layout: fixed;
     }
 
-        .emp-table thead tr {
-            background: #faf9ff;
+        .emp-tbl thead tr {
+            background: #FAF3F4;
         }
 
-        .emp-table th {
-            padding: 10px 14px;
-            font-size: 11px;
+        .emp-tbl th {
+            padding: 10px 16px;
+            font-family: var(--mono);
+            font-size: 10px;
             font-weight: 600;
-            color: #6b7280;
+            color: var(--text-3);
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: .1em;
             text-align: left;
-            border-bottom: 1px solid #f0eef8;
+            border-bottom: 1px solid var(--border);
         }
 
-        .emp-table td {
-            padding: 11px 14px;
+        .emp-tbl td {
+            padding: 12px 16px;
             font-size: 13px;
-            color: #111;
-            border-bottom: 1px solid #f0eef8;
+            color: var(--text-1);
+            border-bottom: 1px solid #F0E8EA;
             vertical-align: middle;
         }
 
-        .emp-table tbody tr:last-child td {
+        .emp-tbl tbody tr:last-child td {
             border-bottom: none;
         }
 
-        .emp-table tbody tr:hover {
-            background: #faf9ff;
+        .emp-tbl tbody tr {
+            transition: background .1s;
         }
 
-    .avatar {
+            .emp-tbl tbody tr:hover {
+                background: #FDF5F6;
+            }
+
+    /* row number */
+    .rn {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--text-3);
+    }
+
+    /* emp number pill */
+    .emp-no-pill {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        font-weight: 500;
+        background: var(--navy-lt);
+        color: var(--navy);
+        border: 1px solid #C4CCE0;
+        padding: 3px 9px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    /* avatar */
+    .av {
         width: 30px;
         height: 30px;
-        border-radius: 50%;
-        background: #EEEDFE;
+        border-radius: 6px;
+        background: var(--crimson);
+        color: #fff;
+        font-size: 10.5px;
+        font-weight: 700;
+        font-family: var(--mono);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 11px;
-        font-weight: 500;
-        color: #534AB7;
-        margin-right: 8px;
+        margin-right: 9px;
         vertical-align: middle;
         flex-shrink: 0;
+        letter-spacing: .5px;
     }
 
-    .emp-cell {
+    .name-cell {
         display: flex;
         align-items: center;
     }
 
+    .emp-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-1);
+    }
+
+    .desig-val {
+        font-size: 12.5px;
+        color: var(--text-2);
+    }
+
+    /* dept code pills — cycling colors */
     .dept-pill {
-        background: #EEEDFE;
-        color: #534AB7;
+        font-family: var(--mono);
         font-size: 11px;
         font-weight: 500;
         padding: 3px 9px;
-        border-radius: 20px;
+        border-radius: 4px;
         display: inline-block;
     }
 
-    .emp-number {
-        font-family: monospace;
-        font-size: 12px;
-        color: #534AB7;
+    .dp-teal {
+        background: var(--teal-lt);
+        color: var(--teal);
+        border: 1px solid #9AD8D9;
     }
 
-    .date-cell {
-        color: #9ca3af;
-        font-size: 12px;
+    .dp-gold {
+        background: var(--gold-lt);
+        color: var(--gold);
+        border: 1px solid #F0C97A;
     }
 
-    .empty-state {
-        padding: 3rem;
+    .dp-navy {
+        background: var(--navy-lt);
+        color: var(--navy);
+        border: 1px solid #C4CCE0;
+    }
+
+    .dp-rose {
+        background: var(--crimson-lt);
+        color: var(--rose);
+        border: 1px solid #E8AABB;
+    }
+
+    .date-val {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--text-3);
+    }
+
+    /* empty */
+    .empty-row td {
+        padding: 52px 20px;
         text-align: center;
-        color: #9ca3af;
+        color: var(--text-3);
         font-size: 13px;
     }
 
-        .empty-state i {
-            font-size: 36px;
-            display: block;
-            margin-bottom: 10px;
-            color: #d1d5db;
+    /* ── Responsive ─────────────────────────────────────────────────────────── */
+    @@media (max-width: 700px) {
+        .f-cell {
+            margin-right: 0;
+            width: 100%;
         }
+
+        .f-inp, .f-inp.short {
+            width: 100%;
+        }
+
+        .f-lbl {
+            min-width: 80px;
+        }
+    }
 </style>
 
-<div class="page">
+<div class="title-bar">
+    <span class="title-bar-brand">PC<span>MS</span></span>
+    <span class="title-bar-text">Employee Entry Form</span>
+</div>
 
-    @* ── ADD EMPLOYEE FORM ── *@
-    <div class="card">
-        <div class="hdr">
-            <div class="hdr-icon"><i class="ti ti-user-plus"></i></div>
-            <div>
-                <div class="hdr-title">Employee addition</div>
-                <div class="hdr-sub">Register a new employee into the system</div>
-            </div>
-            <div class="hdr-badge"><i class="ti ti-shield-check" style="font-size:11px;margin-right:4px"></i>pcms</div>
+<div class="wrap">
+
+    @* ── FORM CARD ── *@
+    <div class="form-card">
+        <div class="form-card-hdr">
+            <div class="form-card-hdr-sq"></div>
+            <span class="form-card-hdr-title">Add New Employee</span>
         </div>
-
-        <div class="body">
+        <div class="form-body">
 
             @if (TempData["SuccessMessage"] != null)
             {
-                <div class="alert-success">
-                    <i class="ti ti-circle-check" style="font-size:16px"></i>
-                    @TempData["SuccessMessage"]
-                </div>
+                <div class="alert alert-ok">✓ &nbsp;@TempData["SuccessMessage"]</div>
             }
-
             @if (TempData["ErrorMessage"] != null)
             {
-                <div class="alert-error">
-                    <i class="ti ti-alert-circle" style="font-size:16px"></i>
-                    @TempData["ErrorMessage"]
-                </div>
+                <div class="alert alert-err">✕ &nbsp;@TempData["ErrorMessage"]</div>
             }
 
             @using (Html.BeginForm("Insert", "EmployeeDetails", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
 
-                <div class="grid2">
-                    <div class="fg">
-                        <label class="lbl">Emp. number<span class="req">*</span></label>
-                        @Html.TextBoxFor(m => m.EmpNumber, new { @class = "form-control", placeholder = "e.g. EMP-0042" })
-                        @Html.ValidationMessageFor(m => m.EmpNumber)
+                <div class="f-row">
+                    <div class="f-cell">
+                        <label class="f-lbl">Emp. Number</label>
+                        <div>
+                            @Html.TextBoxFor(m => m.EmpNumber, new { @class = "f-inp mono-inp short", placeholder = "e.g. 090983" })
+                            @Html.ValidationMessageFor(m => m.EmpNumber)
+                        </div>
                     </div>
-                    <div class="fg">
-                        <label class="lbl">Designation<span class="req">*</span></label>
-                        @Html.TextBoxFor(m => m.Designation, new { @class = "form-control", placeholder = "e.g. Engineer" })
-                        @Html.ValidationMessageFor(m => m.Designation)
+                    <div class="f-cell">
+                        <label class="f-lbl">Employee Name</label>
+                        <div>
+                            @Html.TextBoxFor(m => m.EmpName, new { @class = "f-inp", placeholder = "Full name" })
+                            @Html.ValidationMessageFor(m => m.EmpName)
+                        </div>
                     </div>
                 </div>
 
-                <div class="fg">
-                    <label class="lbl">Employee name<span class="req">*</span></label>
-                    @Html.TextBoxFor(m => m.EmpName, new { @class = "form-control", placeholder = "Full name" })
-                    @Html.ValidationMessageFor(m => m.EmpName)
+                <div class="f-row">
+                    <div class="f-cell">
+                        <label class="f-lbl">Designation</label>
+                        <div>
+                            @Html.TextBoxFor(m => m.Designation, new { @class = "f-inp short", placeholder = "e.g. W8" })
+                            @Html.ValidationMessageFor(m => m.Designation)
+                        </div>
+                    </div>
+                    <div class="f-cell">
+                        <label class="f-lbl">Department</label>
+                        <div>
+                            <div class="sel-wrap">
+                                @Html.DropDownListFor(m => m.DeptCode,
+                                    (SelectList)ViewBag.Departments,
+                                    "— Select dept —",
+                                    new { @class = "f-inp" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.DeptCode)
+                        </div>
+                    </div>
                 </div>
 
-                <div class="fg">
-                    <label class="lbl">Dept code<span class="req">*</span></label>
-                    @Html.DropDownListFor(m => m.DeptCode,
-                        (SelectList)ViewBag.Departments,
-                        "— Select department —",
-                        new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.DeptCode)
-                </div>
-
-                <div class="actions">
-                    <button type="submit" class="btn-insert">
-                        <i class="ti ti-circle-check" style="font-size:16px"></i> Insert
-                    </button>
-                    <button type="reset" class="btn-reset">
-                        <i class="ti ti-refresh" style="font-size:16px"></i> Reset
-                    </button>
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">SUBMIT</button>
+                    <button type="reset" class="btn-back">— Reset</button>
                 </div>
             }
         </div>
     </div>
 
-    @* ── EMPLOYEE TABLE ── *@
-    <div class="card" style="max-width:900px">
+    @* ── TABLE CARD ── *@
+    <div class="tbl-card">
         <div class="tbl-hdr">
-            <div class="tbl-title">
-                <i class="ti ti-users" style="font-size:16px;color:#7F77DD"></i>
-                Employee records
-                <span class="count-badge">@ViewBag.EmployeeCount employee@(ViewBag.EmployeeCount == 1 ? "" : "s")</span>
+            <div class="tbl-hdr-left">
+                <div class="tbl-hdr-sq"></div>
+                <span class="tbl-hdr-title">Employee Records</span>
             </div>
-            <div class="search-wrap">
-                <i class="ti ti-search"></i>
-                <input type="text" id="searchInput" placeholder="Search employees…" onkeyup="filterTable()" />
+            <span class="tbl-total">TOTAL @ViewBag.EmployeeCount</span>
+        </div>
+
+        <div class="tbl-toolbar">
+            <div class="srch-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input type="text" id="srch" placeholder="Search records…" onkeyup="doSearch()" />
             </div>
         </div>
 
-        @if (ViewBag.Employees != null && ((List<pcms.Models.EmployeeDetails>)ViewBag.Employees).Count > 0)
-        {
-            <table class="emp-table" id="empTable">
-                <thead>
-                    <tr>
-                        <th style="width:40px">#</th>
-                        <th style="width:110px">Emp. no</th>
-                        <th>Name</th>
-                        <th style="width:120px">Designation</th>
-                        <th style="width:200px">Department</th>
-                        <th style="width:90px">Added on</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        var employees = (List<pcms.Models.EmployeeDetails>)ViewBag.Employees;
-                        int rowNum = 1;
-                    }
-                    @foreach (var emp in employees)
+        <table class="emp-tbl" id="empTbl">
+            <thead>
+                <tr>
+                    <th style="width:40px">#</th>
+                    <th style="width:120px">Emp. Number</th>
+                    <th>Employee Name</th>
+                    <th style="width:130px">Designation</th>
+                    <th style="width:120px">Dept Code</th>
+                    <th style="width:100px">Added On</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.Employees != null && ((List<pcms.Models.EmployeeDetails>)ViewBag.Employees).Count > 0)
+                {
+                    var employees = (List<pcms.Models.EmployeeDetails>)ViewBag.Employees;
+                    // cycling pill colors
+                    var pillClasses = new[] { "dp-teal", "dp-gold", "dp-navy", "dp-rose" };
+                    int rowNum = 1;
+
+                    foreach (var emp in employees)
                     {
-                        var initials = string.Join("", emp.EmpName.Trim().Split(' ')
-                                            .Take(2).Select(w => w[0].ToString().ToUpper()));
+                        var parts = emp.EmpName.Trim().Split(new[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+                        var initials = parts.Length >= 2
+                            ? $"{parts[0][0]}{parts[parts.Length - 1][0]}".ToUpper()
+                            : parts[0][0].ToString().ToUpper();
+                        var pill = pillClasses[(rowNum - 1) % pillClasses.Length];
+
                         <tr>
-                            <td style="color:#9ca3af;font-size:12px">@rowNum</td>
-                            <td class="emp-number">@emp.EmpNumber</td>
+                            <td class="rn">@rowNum</td>
+                            <td><span class="emp-no-pill">@emp.EmpNumber</span></td>
                             <td>
-                                <div class="emp-cell">
-                                    <div class="avatar">@initials</div>
-                                    <span>@emp.EmpName</span>
+                                <div class="name-cell">
+                                    <div class="av">@initials</div>
+                                    <span class="emp-name">@emp.EmpName</span>
                                 </div>
                             </td>
-                            <td style="color:#6b7280">@emp.Designation</td>
-                            <td>
-                                <span class="dept-pill">@emp.DeptCode</span>
-                            </td>
-                            <td class="date-cell">@emp.CreatedAt.ToString("dd MMM yy")</td>
+                            <td class="desig-val">@emp.Designation</td>
+                            <td><span class="dept-pill @pill">@emp.DeptCode</span></td>
+                            <td class="date-val">@emp.CreatedAt.ToString("dd MMM yy")</td>
                         </tr>
                         rowNum++;
                     }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <div class="empty-state">
-                <i class="ti ti-user-off"></i>
-                No employees added yet. Use the form above to get started.
-            </div>
-        }
+                }
+                else
+                {
+                    <tr class="empty-row">
+                        <td colspan="6">No employee records yet — use the form above to add one.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 
 </div>
 
 <script>
-    function filterTable() {
-        var input = document.getElementById('searchInput').value.toLowerCase();
-        var rows = document.querySelectorAll('#empTable tbody tr');
-        rows.forEach(function (row) {
-            var text = row.innerText.toLowerCase();
-            row.style.display = text.includes(input) ? '' : 'none';
+    function doSearch() {
+        var q = document.getElementById('srch').value.toLowerCase();
+        var rows = document.querySelectorAll('#empTbl tbody tr:not(.empty-row)');
+        rows.forEach(function (r) {
+            r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
         });
     }
 </script>
