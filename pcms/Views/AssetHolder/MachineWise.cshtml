@@ -1,0 +1,453 @@
+﻿@* pcms/Views/AssetHolder/MachineWise.cshtml *@
+@{
+    Layout = null;
+    ViewBag.Title = "Machine Wise Enquiry";
+
+    var query = ViewBag.Query as string ?? "";
+    var results = ViewBag.Results as List<pcms.Models.DTOs.MachineWiseDTO>
+                  ?? new List<pcms.Models.DTOs.MachineWiseDTO>();
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --coral: #FF6B6B;
+        --pink: #FFB3BA;
+        --blue: #4A90D9;
+        --teal: #2EC4B6;
+        --yellow: #FFD166;
+        --violet: #7C3AED;
+        --violet-light: #EDE9FE;
+        --bg: #F8F9FB;
+        --card: #FFFFFF;
+        --border: #E5E8EF;
+        --text: #1E2432;
+        --muted: #6B7280;
+        --mono: 'JetBrains Mono', monospace;
+        --sans: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .mw-page {
+        font-family: var(--sans);
+        background: var(--bg);
+        min-height: 100vh;
+        padding: 28px 32px;
+        color: var(--text);
+    }
+
+    /* ── breadcrumb ─────────────────────────────────────────── */
+    .mw-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        font-family: var(--mono);
+        font-size: .74rem;
+        color: var(--muted);
+    }
+
+        .mw-breadcrumb a {
+            color: var(--violet);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .mw-breadcrumb a:hover {
+                text-decoration: underline;
+            }
+
+        .mw-breadcrumb .sep {
+            color: var(--border);
+        }
+
+    /* ── header ─────────────────────────────────────────────── */
+    .mw-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 28px;
+    }
+
+    .mw-header-icon {
+        width: 42px;
+        height: 42px;
+        background: linear-gradient(135deg, var(--violet), #A855F7);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+        .mw-header-icon svg {
+            color: #fff;
+        }
+
+    .mw-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: -.3px;
+    }
+
+    .mw-subtitle {
+        font-size: .78rem;
+        color: var(--muted);
+        margin-top: 2px;
+        font-family: var(--mono);
+    }
+
+    /* ── search card ─────────────────────────────────────────── */
+    .mw-search-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 24px 28px;
+        margin-bottom: 28px;
+        display: flex;
+        align-items: flex-end;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .mw-field-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+        min-width: 220px;
+    }
+
+    .mw-label {
+        font-size: .73rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        font-family: var(--mono);
+    }
+
+    .mw-input {
+        height: 40px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        padding: 0 14px;
+        font-family: var(--mono);
+        font-size: .88rem;
+        color: var(--text);
+        background: #FAFBFC;
+        transition: border-color .2s;
+        outline: none;
+        width: 100%;
+    }
+
+        .mw-input:focus {
+            border-color: var(--violet);
+            background: #fff;
+        }
+
+    .mw-hint {
+        font-family: var(--mono);
+        font-size: .7rem;
+        color: var(--muted);
+        margin-top: -8px;
+    }
+
+        .mw-hint span {
+            background: var(--violet-light);
+            color: var(--violet);
+            border: 1px solid #C4B5FD;
+            border-radius: 4px;
+            padding: 1px 7px;
+            margin-right: 5px;
+        }
+
+    .mw-btn {
+        height: 40px;
+        padding: 0 24px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--violet), #A855F7);
+        color: #fff;
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: .85rem;
+        cursor: pointer;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        transition: opacity .2s, transform .1s;
+    }
+
+        .mw-btn:hover {
+            opacity: .88;
+        }
+
+        .mw-btn:active {
+            transform: scale(.97);
+        }
+
+    /* ── results header ──────────────────────────────────────── */
+    .mw-results-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .mw-results-title {
+        font-size: .82rem;
+        font-weight: 700;
+        color: var(--muted);
+        font-family: var(--mono);
+        text-transform: uppercase;
+        letter-spacing: .06em;
+    }
+
+    .mw-badge {
+        background: var(--violet-light);
+        color: var(--violet);
+        font-family: var(--mono);
+        font-size: .72rem;
+        font-weight: 700;
+        border-radius: 20px;
+        padding: 3px 12px;
+        border: 1px solid #C4B5FD;
+    }
+
+    /* ── table ───────────────────────────────────────────────── */
+    .mw-table-wrap {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow-x: auto;
+    }
+
+    .mw-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .8rem;
+        table-layout: fixed;
+    }
+
+        .mw-table colgroup col:nth-child(1) {
+            width: 110px;
+        }
+        /* Machine Num */
+        .mw-table colgroup col:nth-child(2) {
+            width: 160px;
+        }
+        /* Model       */
+        .mw-table colgroup col:nth-child(3) {
+            width: 90px;
+        }
+        /* Dept        */
+        .mw-table colgroup col:nth-child(4) {
+            width: 150px;
+        }
+        /* Location    */
+        .mw-table colgroup col:nth-child(5) {
+            width: 150px;
+        }
+        /* Emp. Name   */
+        .mw-table colgroup col:nth-child(6) {
+            width: 70px;
+        }
+        /* Grade       */
+        .mw-table colgroup col:nth-child(7) {
+            width: 100px;
+        }
+        /* Emp Num     */
+        .mw-table colgroup col:nth-child(8) {
+            width: 110px;
+        }
+        /* IP Add      */
+        .mw-table colgroup col:nth-child(9) {
+            width: 140px;
+        }
+        /* Mac.Add     */
+
+        .mw-table thead tr {
+            background: var(--violet-light);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .mw-table th {
+            padding: 10px 14px;
+            font-family: var(--mono);
+            font-size: .7rem;
+            font-weight: 700;
+            color: var(--violet);
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mw-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #F0F2F6;
+            font-family: var(--mono);
+            font-size: .78rem;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mw-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .mw-table tbody tr:hover {
+            background: #F5F3FF;
+        }
+
+    /* ── highlight matched machine num ──────────────────────── */
+    .mw-match {
+        background: var(--violet-light);
+        color: var(--violet);
+        border-radius: 4px;
+        padding: 1px 6px;
+        font-weight: 600;
+    }
+
+    /* ── empty state ─────────────────────────────────────────── */
+    .mw-empty {
+        padding: 56px 24px;
+        text-align: center;
+    }
+
+    .mw-empty-icon {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+    }
+
+    .mw-empty-msg {
+        font-size: .85rem;
+        color: var(--muted);
+        font-family: var(--mono);
+    }
+</style>
+
+<div class="mw-page">
+
+    @* ── Breadcrumb ── *@
+    <div class="mw-breadcrumb">
+        <a href="@Url.Action("Index", "AssetHolder")">Asset Enquiry</a>
+        <span class="sep">›</span>
+        <span>Machine Wise</span>
+    </div>
+
+    @* ── Header ── *@
+    <div class="mw-header">
+        <div class="mw-header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                <path stroke-linecap="round" d="M8 21h8M12 17v4" />
+            </svg>
+        </div>
+        <div>
+            <div class="mw-title">Machine Wise Details</div>
+            <div class="mw-subtitle">Search by Machine Number · partial match supported</div>
+        </div>
+    </div>
+
+    @* ── Search Form ── *@
+    @using (Html.BeginForm("MachineWise", "AssetHolder", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="mw-search-card">
+            <div class="mw-field-wrap">
+                <label class="mw-label">Machine Number</label>
+                <input type="text"
+                       name="searchQuery"
+                       value="@query"
+                       class="mw-input"
+                       placeholder="e.g. C25001  or  C240"
+                       autofocus />
+                <div class="mw-hint">
+                    Examples: <span>C25001</span><span>C240</span><span>P570</span>
+                </div>
+            </div>
+            <button type="submit" class="mw-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="11" cy="11" r="8" />
+                    <path stroke-linecap="round" d="M21 21l-4.35-4.35" />
+                </svg>
+                Search
+            </button>
+        </div>
+    }
+
+    @* ── Results ── *@
+    @if (!string.IsNullOrEmpty(query))
+    {
+        <div class="mw-results-header">
+            <span class="mw-results-title">Dept Wise Asset Distribution</span>
+            <span class="mw-badge">@results.Count record(s)</span>
+        </div>
+
+        <div class="mw-table-wrap">
+            @if (results.Count == 0)
+            {
+                <div class="mw-empty">
+                    <div class="mw-empty-icon">🖥️</div>
+                    <div class="mw-empty-msg">No machine found matching "@query"</div>
+                </div>
+            }
+            else
+            {
+                <table class="mw-table">
+                    <colgroup>
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Machine Num</th>
+                            <th>Model</th>
+                            <th>Dept</th>
+                            <th>Location</th>
+                            <th>Emp. Name</th>
+                            <th>Grade</th>
+                            <th>Emp Num</th>
+                            <th>IP Add</th>
+                            <th>Mac.Add</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in results)
+                        {
+                            <tr>
+                                <td><span class="mw-match" title="@r.McNum">@r.McNum</span></td>
+                                <td title="@r.MachineName">@r.MachineName</td>
+                                <td title="@r.Dept">@(string.IsNullOrEmpty(r.Dept) ? "—" : r.Dept)</td>
+                                <td title="@r.CurrLoc">@(string.IsNullOrEmpty(r.CurrLoc) ? "—" : r.CurrLoc)</td>
+                                <td title="@r.EmpName">@(string.IsNullOrEmpty(r.EmpName) ? "—" : r.EmpName)</td>
+                                <td>@(string.IsNullOrEmpty(r.Grade) ? "X" : r.Grade)</td>
+                                <td>@(string.IsNullOrEmpty(r.EmpNo) ? "XXXXXX" : r.EmpNo)</td>
+                                <td>@(string.IsNullOrEmpty(r.IpNo) ? "X" : r.IpNo)</td>
+                                <td>@(string.IsNullOrEmpty(r.MacAddress) ? "X" : r.MacAddress)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    }
+
+</div>

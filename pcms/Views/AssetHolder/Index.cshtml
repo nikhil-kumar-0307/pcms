@@ -1,0 +1,494 @@
+﻿@* pcms/Views/AssetHolder/Index.cshtml *@
+@{
+    Layout = null;
+    ViewBag.Title = "Asset Holder Enquiry";
+
+    var query = ViewBag.Query as string ?? "";
+    var results = ViewBag.Results as List<pcms.Models.DTOs.AssetHolderDTO>
+                  ?? new List<pcms.Models.DTOs.AssetHolderDTO>();
+}
+
+@* ── Google Fonts (same as rest of PCMS) ────────────────────────── *@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    /* ── root / tokens ─────────────────────────────────────────── */
+    :root {
+        --coral: #FF6B6B;
+        --pink: #FFB3BA;
+        --blue: #4A90D9;
+        --yellow: #FFD166;
+        --teal: #2EC4B6;
+        --bg: #F8F9FB;
+        --card: #FFFFFF;
+        --border: #E5E8EF;
+        --text: #1E2432;
+        --muted: #6B7280;
+        --mono: 'JetBrains Mono', monospace;
+        --sans: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* ── page shell ────────────────────────────────────────────── */
+    .ah-page {
+        font-family: var(--sans);
+        background: var(--bg);
+        min-height: 100vh;
+        padding: 28px 32px;
+        color: var(--text);
+    }
+
+    /* ── header ────────────────────────────────────────────────── */
+    .ah-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 28px;
+    }
+
+    .ah-header-icon {
+        width: 42px;
+        height: 42px;
+        background: linear-gradient(135deg, var(--coral), var(--pink));
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+        .ah-header-icon svg {
+            color: #fff;
+        }
+
+    .ah-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: -.3px;
+    }
+
+    .ah-subtitle {
+        font-size: .78rem;
+        color: var(--muted);
+        margin-top: 2px;
+        font-family: var(--mono);
+    }
+
+    /* ── search card ───────────────────────────────────────────── */
+    .ah-search-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 24px 28px;
+        margin-bottom: 28px;
+        display: flex;
+        align-items: flex-end;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .ah-field-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+        min-width: 220px;
+    }
+
+    .ah-label {
+        font-size: .73rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        font-family: var(--mono);
+    }
+
+    .ah-input {
+        height: 40px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        padding: 0 14px;
+        font-family: var(--mono);
+        font-size: .88rem;
+        color: var(--text);
+        background: #FAFBFC;
+        transition: border-color .2s;
+        outline: none;
+        width: 100%;
+    }
+
+        .ah-input:focus {
+            border-color: var(--coral);
+            background: #fff;
+        }
+
+    .ah-btn {
+        height: 40px;
+        padding: 0 24px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--coral), #FF8E53);
+        color: #fff;
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: .85rem;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: opacity .2s, transform .1s;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+        .ah-btn:hover {
+            opacity: .88;
+        }
+
+        .ah-btn:active {
+            transform: scale(.97);
+        }
+
+    /* ── results area ──────────────────────────────────────────── */
+    .ah-results-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .ah-results-title {
+        font-size: .82rem;
+        font-weight: 700;
+        color: var(--muted);
+        font-family: var(--mono);
+        text-transform: uppercase;
+        letter-spacing: .06em;
+    }
+
+    .ah-badge {
+        background: #FFF0ED;
+        color: var(--coral);
+        font-family: var(--mono);
+        font-size: .72rem;
+        font-weight: 700;
+        border-radius: 20px;
+        padding: 3px 12px;
+        border: 1px solid #FFD5CC;
+    }
+
+    /* ── table ─────────────────────────────────────────────────── */
+    .ah-table-wrap {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow-x: auto;
+    }
+
+    .ah-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .8rem;
+        table-layout: fixed;
+    }
+        /* column widths matching image */
+        .ah-table colgroup col:nth-child(1) {
+            width: 76px;
+        }
+
+        .ah-table colgroup col:nth-child(2) {
+            width: 130px;
+        }
+
+        .ah-table colgroup col:nth-child(3) {
+            width: 76px;
+        }
+
+        .ah-table colgroup col:nth-child(4) {
+            width: 50px;
+        }
+
+        .ah-table colgroup col:nth-child(5) {
+            width: 150px;
+        }
+
+        .ah-table colgroup col:nth-child(6) {
+            width: 52px;
+        }
+
+        .ah-table colgroup col:nth-child(7) {
+            width: 140px;
+        }
+
+        .ah-table colgroup col:nth-child(8) {
+            width: 110px;
+        }
+
+        .ah-table colgroup col:nth-child(9) {
+            width: 90px;
+        }
+
+        .ah-table colgroup col:nth-child(10) {
+            width: 100px;
+        }
+
+        .ah-table colgroup col:nth-child(11) {
+            width: 86px;
+        }
+
+        .ah-table colgroup col:nth-child(12) {
+            width: 70px;
+        }
+
+        .ah-table colgroup col:nth-child(13) {
+            width: 130px;
+        }
+
+        .ah-table colgroup col:nth-child(14) {
+            width: 120px;
+        }
+
+        .ah-table thead tr {
+            background: #FFF5F3;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .ah-table th {
+            padding: 10px 12px;
+            font-family: var(--mono);
+            font-size: .7rem;
+            font-weight: 700;
+            color: var(--coral);
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ah-table td {
+            padding: 9px 12px;
+            border-bottom: 1px solid #F0F2F6;
+            font-family: var(--mono);
+            font-size: .78rem;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ah-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .ah-table tbody tr:hover {
+            background: #FFF8F7;
+        }
+
+    /* ── pill for pool tag ─────────────────────────────────────── */
+    .pill {
+        display: inline-block;
+        padding: 2px 9px;
+        border-radius: 20px;
+        font-size: .68rem;
+        font-weight: 700;
+        font-family: var(--mono);
+    }
+
+    .pill-n {
+        background: #E0F8F6;
+        color: var(--teal);
+    }
+
+    .pill-o {
+        background: #FFF3CD;
+        color: #B45309;
+    }
+
+    .pill-x {
+        background: #F0F2F6;
+        color: var(--muted);
+    }
+
+    /* ── empty / placeholder ───────────────────────────────────── */
+    .ah-empty {
+        padding: 56px 24px;
+        text-align: center;
+    }
+
+    .ah-empty-icon {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+    }
+
+    .ah-empty-msg {
+        font-size: .85rem;
+        color: var(--muted);
+        font-family: var(--mono);
+    }
+
+    .pill-sr {
+        background: #EDE9FE;
+        color: #7C3AED;
+    }
+    /* SR – purple */
+    .pill-s {
+        background: #DCFCE7;
+        color: #16A34A;
+    }
+    /* S  – green  */
+    .pill-cf {
+        background: #FEF9C3;
+        color: #B45309;
+    }
+    /* CF – amber  */
+    .pill-cr {
+        background: #DBEAFE;
+        color: #1D4ED8;
+    }
+    /* CR – blue   */
+    .pill-x {
+        background: #F0F2F6;
+        color: #6B7280;
+    }
+    /* fallback    */
+</style>
+
+<div class="ah-page">
+
+    @* ── Page Header ── *@
+    <div class="ah-header">
+        <div class="ah-header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" />
+            </svg>
+        </div>
+        <div>
+            <div class="ah-title">Asset Holder Enquiry</div>
+            <div class="ah-subtitle">Search by Employee No · or · Employee Name</div>
+        </div>
+    </div>
+
+    @* ── Search Form ── *@
+    @using (Html.BeginForm("Index", "AssetHolder", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="ah-search-card">
+            <div class="ah-field-wrap">
+                <label class="ah-label">Employee No / Name</label>
+                <input type="text"
+                       name="searchQuery"
+                       value="@query"
+                       class="ah-input"
+                       placeholder="e.g. 090983  or  Dinesh Kumar Singh"
+                       autofocus />
+            </div>
+            <button type="submit" class="ah-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="11" cy="11" r="8" />
+                    <path stroke-linecap="round" d="M21 21l-4.35-4.35" />
+                </svg>
+                Search
+            </button>
+        </div>
+    }
+
+    @* ── Results ── *@
+    @if (!string.IsNullOrEmpty(query))
+    {
+        <div class="ah-results-header">
+            <span class="ah-results-title">Asset Holder Details</span>
+            <span class="ah-badge">@results.Count record(s)</span>
+        </div>
+
+        <div class="ah-table-wrap">
+            @if (results.Count == 0)
+            {
+                <div class="ah-empty">
+                    <div class="ah-empty-icon">🔍</div>
+                    <div class="ah-empty-msg">No assets found for "@query"</div>
+                </div>
+            }
+            else
+            {
+                <table class="ah-table">
+                    <colgroup>
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Emp No</th>
+                            <th>Emp Name</th>
+                            <th>Mcn No</th>
+                            <th>Tag</th>
+                            <th>Machine Name</th>
+                            <th>Grade</th>
+                            <th>Dept</th>
+                            <th>Location</th>
+                            <th>IP Add</th>
+                            <th>Si Num</th>
+                            <th>Issue Dt</th>
+                            <th>Rec No</th>
+                            <th>Rec Name</th>
+                            <th>Asset Code</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in results)
+                        {
+                            <tr>
+                                <td>@r.EmpNo</td>
+                                <td title="@r.EmpName">@r.EmpName</td>
+                                <td>@r.McNum</td>
+                                <td>
+                                    @{
+                                        var tag = r.PTag ?? "—";
+                                        var cls = tag == "SR" ? "pill-sr"
+                                                : tag == "S" ? "pill-s"
+                                                : tag == "CF" ? "pill-cf"
+                                                : tag == "CR" ? "pill-cr"
+                                                              : "pill-x";
+                                    }
+                                    <span class="pill @cls">@tag</span>
+                                    <span class="pill @cls">@tag</span>
+                                </td>
+                                <td title="@r.McNum">@r.McNum</td>
+                                <td>@r.Grade</td>
+                                <td title="@r.DeptName">@r.Dept</td>
+                                <td title="@r.CurrLoc">@r.CurrLoc</td>
+                                <td>@(string.IsNullOrEmpty(r.IpNo) ? "X" : r.IpNo)</td>
+                                <td>@(string.IsNullOrEmpty(r.SiNum) ? "X" : r.SiNum)</td>
+                                <td>
+                                    @(r.IssueDt.HasValue
+                                        ? r.IssueDt.Value.ToString("dd/MM/yyyy")
+                                        : "—")
+                                </td>
+                                <td>@r.RecEmpNo</td>
+                                <td title="@r.RecEmpName">@r.RecEmpName</td>
+                                <td title="@r.AssetCode">@r.AssetCode</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    }
+
+</div>
